@@ -8,9 +8,9 @@ import logging
 from typing import List, Dict, Any, Optional
 import chromadb
 from chromadb.config import Settings
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 
 logger = logging.getLogger(__name__)
 

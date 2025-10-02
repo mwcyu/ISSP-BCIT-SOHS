@@ -10,9 +10,9 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 import asyncio
 
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage, AIMessage
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 from config.feedback_sections import FEEDBACK_SECTIONS, SYSTEM_PROMPTS
 from services.rag_service import RAGService
@@ -234,10 +234,12 @@ class ChatbotService:
             """
             
             # Get LLM analysis
-            analysis_response = await self.llm.apredict(analysis_prompt)
+            analysis_response = await self.llm.ainvoke(analysis_prompt)
             
             try:
-                analysis_data = json.loads(analysis_response)
+                # Extract content from the response
+                response_content = analysis_response.content if hasattr(analysis_response, 'content') else str(analysis_response)
+                analysis_data = json.loads(response_content)
                 return {
                     "is_sufficient": analysis_data.get("is_sufficient", False),
                     "reason": "analysis_complete",
@@ -319,9 +321,11 @@ class ChatbotService:
                 prompt += f"\n\nRelevant guidance:\n{context_str}"
             
             # Generate response
-            response = await self.llm.apredict(prompt)
+            response = await self.llm.ainvoke(prompt)
             
-            return {"content": response.strip()}
+            # Extract content from the response
+            response_content = response.content if hasattr(response, 'content') else str(response)
+            return {"content": response_content.strip()}
             
         except Exception as e:
             logger.error(f"Error generating AI response: {str(e)}")
@@ -376,10 +380,13 @@ class ChatbotService:
             """
             
             # Generate summary using LLM
-            summary_response = await self.llm.apredict(summary_prompt)
+            summary_response = await self.llm.ainvoke(summary_prompt)
+            
+            # Extract content from the response
+            summary_content = summary_response.content if hasattr(summary_response, 'content') else str(summary_response)
             
             return {
-                "summary": summary_response,
+                "summary": summary_content,
                 "session_id": session_id,
                 "sections_completed": len(session.completed_sections),
                 "total_sections": len(FEEDBACK_SECTIONS),
