@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Feedback Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            align-self: flex-start;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background-color: #4CAF50;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .system-message {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            text-align: center;
+            margin: 10px auto;
+            font-style: italic;
+            color: #856404;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #messageInput:focus {
+            border-color: #4CAF50;
+        }
+
+        .send-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #45a049;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e9ecef;
+            margin: 0 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            padding: 10px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .control-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #5a6268;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                min-height: calc(100vh - 20px);
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Clinical Feedback Helper</h1>
+            <p>AI-powered assistant for nursing student feedback</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages" id="messagesContainer">
+                <div class="system-message">
+                    Click "Start Session" to begin providing feedback
+                </div>
+            </div>
+
+            <div class="loading" id="loadingIndicator">
+                🤖 Bot is thinking...
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-row">
+                <input type="text" id="messageInput" placeholder="Type your message here..." disabled />
+                <button class="send-btn" id="sendBtn" disabled>Send</button>
+            </div>
+
+            <div class="control-buttons">
+                <button class="control-btn" id="startBtn">Start Session</button>
+                <button class="control-btn" id="progressBtn" disabled>Show Progress</button>
+                <button class="control-btn" id="resetBtn" disabled>Reset Session</button>
+            </div>
+        </div>
+
+        <div class="status" id="statusBar">
+            Ready to start • Server: <span id="serverStatus">Checking...</span>
+        </div>
+    </div>
+
+    <script>
+        class ChatClient {
+            constructor() {
+                this.baseUrl = 'http://localhost:8000';
+                this.sessionId = null;
+                this.currentSection = 0;
+                this.totalSections = 8;
+
+                this.initializeElements();
+                this.attachEventListeners();
+                this.checkServerStatus();
+            }
+
+            initializeElements() {
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendBtn = document.getElementById('sendBtn');
+                this.startBtn = document.getElementById('startBtn');
+                this.progressBtn = document.getElementById('progressBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.statusBar = document.getElementById('statusBar');
+                this.serverStatus = document.getElementById('serverStatus');
+                this.progressFill = document.getElementById('progressFill');
+                this.loadingIndicator = document.getElementById('loadingIndicator');
+            }
+
+            attachEventListeners() {
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !this.sendBtn.disabled) {
+                        this.sendMessage();
+                    }
+                });
+
+                this.startBtn.addEventListener('click', () => this.startSession());
+                this.progressBtn.addEventListener('click', () => this.getProgress());
+                this.resetBtn.addEventListener('click', () => this.resetSession());
+            }
+
+            async checkServerStatus() {
+                try {
+                    const response = await fetch(`${this.baseUrl}/`);
+                    this.serverStatus.textContent = 'Connected';
+                    this.serverStatus.style.color = '#28a745';
+                } catch (error) {
+                    this.serverStatus.textContent = 'Disconnected';
+                    this.serverStatus.style.color = '#dc3545';
+                    this.addMessage('system', 'Cannot connect to server. Make sure the backend is running with: python main.py');
+                }
+            }
+
+            async startSession() {
+                this.showLoading(true);
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/start`, {
+                        method: 'POST'
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.sessionId = data.session_id;
+                        this.currentSection = data.current_section || 0;
+
+                        this.messagesContainer.innerHTML = '';
+                        this.addMessage('bot', data.response);
+
+                        this.enableChat();
+                        this.updateStatus('Session started • Ready for input');
+                    } else {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                } catch (error) {
+                    this.addMessage('system error', `Failed to start session: ${error.message}`);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || !this.sessionId) return;
+
+                this.addMessage('user', message);
+                this.messageInput.value = '';
+                this.showLoading(true);
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_id: this.sessionId,
+                            message: message
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.addMessage('bot', data.response);
+
+                        // Update progress
+                        if (data.current_section !== undefined) {
+                            this.currentSection = data.current_section;
+                            this.updateProgress();
+                        }
+
+                        // Check if complete
+                        if (data.next_action === 'complete') {
+                            this.disableChat();
+                            this.addMessage('system', '🎉 Feedback collection complete!');
+                            this.updateStatus('Session completed');
+                        } else {
+                            this.updateStatus(`Section ${this.currentSection}/${this.totalSections} • Continue providing feedback`);
+                        }
+                    } else {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+                } catch (error) {
+                    this.addMessage('system error', `Failed to send message: ${error.message}`);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async getProgress() {
+                if (!this.sessionId) return;
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/session/${this.sessionId}/progress`);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const progress = data.progress;
+
+                        const progressText = `
+Progress Update:
+• Current Section: ${progress.current_section || 'Not started'}
+• Completed Sections: ${(progress.completed_sections || []).length}
+• Feedback Type: ${progress.feedback_type || 'Not selected'}
+                        `.trim();
+
+                        this.addMessage('system', progressText);
+                    }
+                } catch (error) {
+                    this.addMessage('system error', `Failed to get progress: ${error.message}`);
+                }
+            }
+
+            async resetSession() {
+                if (!this.sessionId) return;
+
+                try {
+                    const response = await fetch(`${this.baseUrl}/api/session/${this.sessionId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        this.sessionId = null;
+                        this.currentSection = 0;
+                        this.messagesContainer.innerHTML = '';
+                        this.addMessage('system', 'Session reset. Click "Start Session" to begin again.');
+                        this.disableChat();
+                        this.updateProgress();
+                        this.updateStatus('Ready to start • Click "Start Session"');
+                    }
+                } catch (error) {
+                    this.addMessage('system error', `Failed to reset session: ${error.message}`);
+                }
+            }
+
+            addMessage(type, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type.replace(' ', '-')}-message`;
+                messageDiv.textContent = content;
+
+                this.messagesContainer.appendChild(messageDiv);
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+
+            enableChat() {
+                this.messageInput.disabled = false;
+                this.sendBtn.disabled = false;
+                this.progressBtn.disabled = false;
+                this.resetBtn.disabled = false;
+                this.startBtn.disabled = true;
+                this.messageInput.focus();
+            }
+
+            disableChat() {
+                this.messageInput.disabled = true;
+                this.sendBtn.disabled = true;
+                this.startBtn.disabled = false;
+            }
+
+            showLoading(show) {
+                this.loadingIndicator.classList.toggle('show', show);
+                this.sendBtn.disabled = show || !this.sessionId;
+            }
+
+            updateProgress() {
+                const progressPercent = (this.currentSection / this.totalSections) * 100;
+                this.progressFill.style.width = `${Math.min(progressPercent, 100)}%`;
+            }
+
+            updateStatus(text) {
+                this.statusBar.innerHTML = `${text} • Server: <span id="serverStatus" style="color: #28a745;">Connected</span>`;
+            }
+        }
+
+        // Initialize the chat client when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatClient();
+        });
+    </script>
+</body>
+
+</html>
