@@ -12,7 +12,7 @@ This is the backend service for an AI-powered chatbot that helps nursing precept
 
 ## Architecture
 - **FastAPI**: Modern Python web framework for the REST API
-- **LangChain**: LLM orchestration and prompt management
+- **LangChain v1 (0.3.x)**: LLM orchestration and prompt management with latest syntax
 - **ChromaDB**: Vector database for RAG implementation
 - **OpenAI GPT**: Large language model for intelligent conversations
 - **Pydantic**: Data validation and serialization
@@ -59,11 +59,38 @@ This is the backend service for an AI-powered chatbot that helps nursing precept
    ```
 
 5. **Run the application**
+   
+   For API server:
    ```bash
    python main.py
    ```
+   
+   For terminal testing (CLI REPL):
+   ```bash
+   python cli_repl.py
+   ```
 
 The API will be available at `http://localhost:8000`
+
+## Terminal Testing (CLI REPL)
+
+You can test the chatbot directly in your terminal without needing the web server:
+
+```bash
+python cli_repl.py
+```
+
+The CLI REPL provides:
+- Direct interaction with the AI agent
+- Real-time feedback collection through terminal
+- Progress tracking and section navigation
+- Simple commands: `sections`, `progress`, `help`, `quit`
+
+This is perfect for:
+- Testing the bot during development
+- Quick feedback collection without UI
+- Debugging conversation flows
+- Understanding the bot's behavior
 
 ## API Documentation
 
@@ -131,15 +158,16 @@ print(summary)
 ```
 backend/
 ├── main.py                 # FastAPI application entry point
-├── requirements.txt        # Python dependencies
+├── cli_repl.py            # CLI REPL for terminal testing (NEW)
+├── requirements.txt        # Python dependencies (updated for LangChain v1)
 ├── .env.example           # Environment variables template
 ├── config/
 │   ├── __init__.py
 │   └── feedback_sections.py  # Feedback sections configuration
 ├── services/
 │   ├── __init__.py
-│   ├── chatbot_service.py   # Main chatbot logic
-│   └── rag_service.py       # RAG and vector database service
+│   ├── chatbot_service.py   # Main chatbot logic (updated for LangChain v1)
+│   └── rag_service.py       # RAG and vector database service (updated for LangChain v1)
 └── data/
     └── chroma_db/          # Vector database storage (auto-created)
 ```

@@ -2,9 +2,26 @@
 
 ## 🎯 Simple Ways to Use the Bot
 
-I've created **3 easy ways** for you to use the Clinical Feedback Helper bot:
+I've created **4 easy ways** for you to use the Clinical Feedback Helper bot:
 
-### 🖥️ Option 1: Terminal Client (Command Line Chat)
+### ⚡ Option 1: CLI REPL (NEW - Direct Terminal Testing)
+
+**Best for:** Testing during development, quick feedback without server
+
+```bash
+# Just run this single command - no server needed!
+python cli_repl.py
+```
+
+**Features:**
+
+- ✅ Direct interaction with AI agent
+- ✅ No separate server needed
+- ✅ Instant startup
+- ✅ Perfect for development and testing
+- ✅ Type `help`, `sections`, `progress`, `quit`
+
+### 🖥️ Option 2: Terminal Client (Command Line Chat)
 
 **Best for:** Quick testing, developers, command-line users
 
@@ -43,7 +60,7 @@ python main.py
 - ✅ Mobile-friendly design
 - ✅ No installation needed - just open in browser!
 
-### 🔧 Option 3: Launcher Script (Super Easy!)
+### 🔧 Option 4: Launcher Script (Super Easy!)
 
 **Best for:** Beginners, one-click operation
 
@@ -73,7 +90,14 @@ launcher.bat
 5. **Open a new terminal** and run `launcher.bat` again
 6. **Choose option 2** (terminal) or **option 3** (web) to chat with the bot
 
-### For Quick Testing:
+### For Quick Testing (NEW - Recommended):
+
+```bash
+# Single command - no server needed!
+python cli_repl.py
+```
+
+### For Testing with Server:
 
 ```bash
 # Terminal 1: Start server
@@ -180,10 +204,12 @@ The bot guides you through sections like:
 ## 📁 Files Overview
 
 - `main.py` - Backend server (FastAPI)
-- `terminal_client.py` - Command-line chat interface
+- `cli_repl.py` - **NEW**: Direct CLI REPL for terminal testing (no server needed)
+- `terminal_client.py` - Command-line chat interface (requires server)
 - `web_client.html` - Browser-based chat interface
 - `launcher.bat` - Easy launcher script
 - `test_clinical_feedback.py` - Test suite
+- `test_migration.py` - **NEW**: Test LangChain v1 migration
 
 ---
 
@@ -191,8 +217,11 @@ The bot guides you through sections like:
 
 Your Clinical Feedback Helper is now ready to use! Pick your preferred method:
 
-- **🖥️ Terminal:** `python terminal_client.py`
-- **🌐 Web:** Open `web_client.html`
+- **⚡ CLI REPL (NEW):** `python cli_repl.py` - Fastest for testing!
+- **🖥️ Terminal:** `python terminal_client.py` (requires server)
+- **🌐 Web:** Open `web_client.html` (requires server)
 - **🔧 Launcher:** `launcher.bat`
+
+**Updated for LangChain v1!** 🎯✨
 
 Happy feedback collecting! 🏥✨
