@@ -1,0 +1,26 @@
+# Requirements for RAG-based Clinical Feedback Helper
+
+# Core LangChain dependencies (latest versions)
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+
+# OpenAI
+openai>=1.0.0
+
+# Vector Store
+chromadb>=0.4.0
+
+# Text Processing
+langchain-text-splitters>=0.3.0
+
+# Data Models
+pydantic>=2.0.0
+
+# Configuration
+python-dotenv>=1.0.0
+
+# Optional: Enhanced functionality
+# tiktoken>=0.5.0  # For token counting
+# numpy>=1.24.0    # For vector operations

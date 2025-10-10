@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ChatInterface from './components/ChatInterface.tsx';
 import ProgressBar from './components/ProgressBar.tsx';
+import PrivacyNotice from './components/PrivacyNotice.tsx';
 import { FeedbackSection } from './types';
 import { ChatbotService } from './services/api';
 
@@ -45,6 +46,7 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <PrivacyNotice />
         <Routes>
           <Route 
             path="/" 

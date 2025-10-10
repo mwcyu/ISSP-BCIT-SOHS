@@ -29,7 +29,7 @@ const ChatInterface = ({ sessionId, sections }: ChatInterfaceProps) => {
     if (sections.length > 0 && messages.length === 0) {
       const initialMessage: Message = {
         id: `msg-${Date.now()}`,
-        content: `Welcome to the Nursing Feedback AI Chatbot! 🏥\n\nI'm here to help you provide comprehensive feedback for your nursing student. We'll work through 8 structured sections to ensure thorough evaluation.\n\n**Section 1: ${sections[0]?.title}**\n${sections[0]?.description}\n\nTo get started, please share your observations about the student's clinical knowledge application. What specific examples did you observe?`,
+        content: `Welcome to the Nursing Feedback AI Chatbot! 🏥\n\n🔒 **PRIVACY NOTICE**: This session is completely anonymous. We do not collect or store any personal information including names, facility names, or patient identifiers. All feedback is anonymized and used solely for educational purposes.\n\nI'm here to help you provide comprehensive feedback for your nursing student. We'll work through structured sections to ensure thorough evaluation.\n\n**Section 1: ${sections[0]?.title}**\n${sections[0]?.description}\n\nTo get started, please share your observations about the student's clinical knowledge application. Focus on behaviors and skills rather than specific individuals or situations.`,
         role: 'assistant',
         timestamp: new Date(),
         section_id: 1
@@ -175,7 +175,7 @@ const ChatInterface = ({ sessionId, sections }: ChatInterfaceProps) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={`Share your observations for ${getCurrentSectionInfo()?.title}...`}
+            placeholder={`Share your observations for ${getCurrentSectionInfo()?.title} (focus on behaviors and skills, avoid names)...`}
             className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
             rows={3}
             disabled={isLoading}

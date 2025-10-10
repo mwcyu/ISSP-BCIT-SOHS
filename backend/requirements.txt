@@ -1,0 +1,11 @@
+# Core dependencies for the Nursing Preceptor Feedback Chatbot - LangChain v1
+langchain>=0.3.0
+langchain-openai>=0.2.0
+openai>=1.0.0
+python-dotenv>=1.0.0
+
+# Optional dependencies for enhanced functionality
+# pandas>=1.5.0  # For data analysis
+# streamlit>=1.28.0  # For web interface
+# fastapi>=0.100.0  # For API endpoints
+# uvicorn>=0.23.0  # For running FastAPI server
