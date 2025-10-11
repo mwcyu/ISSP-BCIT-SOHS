@@ -7,27 +7,32 @@ import {
   Eye,
   X,
   Home,
-} from "lucide-react"; // Imported Home icon
+  UserCog, // added icon for admin
+} from "lucide-react";
 import bcitLogo from "../assets/bcit-logo.png";
 
 interface PermanentSidebarProps {
+  role?: "user" | "admin" | null; // NEW
   onProgressClick: () => void;
   onGuidelinesClick: () => void;
   onPrivacyPolicyClick: () => void;
   onSettingsClick: () => void;
   onDocumentPreviewClick: () => void;
-  onHomeClick: () => void; // ADDED: New prop for Home button action
+  onHomeClick: () => void;
+  onAdminClick?: () => void; // NEW
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
 
 export function PermanentSidebar({
+  role,
   onProgressClick,
   onGuidelinesClick,
   onPrivacyPolicyClick,
   onSettingsClick,
   onDocumentPreviewClick,
-  onHomeClick, // Destructure new prop
+  onHomeClick,
+  onAdminClick,
   isCollapsed,
   onToggleCollapse,
 }: PermanentSidebarProps) {
@@ -36,7 +41,7 @@ export function PermanentSidebar({
       className={`bg-[#003E6B] text-white h-screen flex flex-col transition-all duration-300 relative ${
         isCollapsed ? "w-16" : "w-64 sm:w-64"
       }`}>
-      {/* Close button - only visible when expanded and on desktop */}
+      {/* Close button */}
       {!isCollapsed && (
         <button
           onClick={onToggleCollapse}
@@ -67,15 +72,15 @@ export function PermanentSidebar({
             <p className="text-xs text-gray-400 mb-3 px-2">MENU</p>
           )}
           <div className="space-y-1">
-            {/* NEW HOME BUTTON/SECTION */}
+            {/* Home */}
             <a href="/">
               <button
-                onClick={onHomeClick} // Use the new action handler
+                onClick={onHomeClick}
                 className={`w-full flex items-center ${
                   isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
                 } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
                 title={isCollapsed ? "Home" : ""}>
-                <Home // Use the Home icon
+                <Home
                   className="transition-none flex-shrink-0"
                   style={{
                     width: isCollapsed ? "18px" : "16px",
@@ -85,8 +90,8 @@ export function PermanentSidebar({
                 {!isCollapsed && <span>Home</span>}
               </button>
             </a>
-            {/* END NEW HOME BUTTON/SECTION */}
 
+            {/* Progress */}
             <button
               onClick={onProgressClick}
               className={`w-full flex items-center ${
@@ -103,6 +108,7 @@ export function PermanentSidebar({
               {!isCollapsed && <span>Progress</span>}
             </button>
 
+            {/* Document Preview */}
             <button
               onClick={onDocumentPreviewClick}
               className={`w-full flex items-center ${
@@ -118,6 +124,25 @@ export function PermanentSidebar({
               />
               {!isCollapsed && <span>Document Preview</span>}
             </button>
+
+            {/* ✅ Admin Button (only visible if role === "admin") */}
+            {role === "admin" && (
+              <button
+                onClick={onAdminClick}
+                className={`w-full flex items-center ${
+                  isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+                } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+                title={isCollapsed ? "Admin Panel" : ""}>
+                <UserCog
+                  className="transition-none flex-shrink-0"
+                  style={{
+                    width: isCollapsed ? "18px" : "16px",
+                    height: isCollapsed ? "18px" : "16px",
+                  }}
+                />
+                {!isCollapsed && <span>Admin Panel</span>}
+              </button>
+            )}
           </div>
         </div>
 
@@ -160,30 +185,6 @@ export function PermanentSidebar({
             </button>
           </div>
         </div>
-
-        {/* Settings Section - Note: This section was commented out in your input, maintaining that structure. */}
-        {/* <div className="p-4 border-t border-gray-700">
-          {!isCollapsed && (
-            <p className="text-xs text-gray-400 mb-3 px-2">SETTINGS</p>
-          )}
-          <div className="space-y-1">
-            <button
-              onClick={onSettingsClick}
-              className={`w-full flex items-center ${
-                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
-              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-              title={isCollapsed ? "Settings" : ""}>
-              <Settings
-                className="transition-none flex-shrink-0"
-                style={{
-                  width: isCollapsed ? "18px" : "16px",
-                  height: isCollapsed ? "18px" : "16px",
-                }}
-              />
-              {!isCollapsed && <span>Settings</span>}
-            </button>
-          </div>
-        </div> */}
       </div>
 
       {/* Footer */}
