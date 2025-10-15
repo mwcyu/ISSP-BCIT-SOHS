@@ -9,15 +9,10 @@ import { DocumentPreviewModal } from "./components/DocumentPreviewModal";
 import AccessPage from "./components/access/AccessPage";
 import AdminPage from "./components/admin/AdminPage";
 
-import {
-  standardPrompts,
-  generateTransitionFeedback,
-  generateFinalFeedback,
-} from "./utils/chatResponses";
-
 import { initializeDefaultCodes } from "./utils/accessStorage";
+import { sendMessageToAI } from "./api/apiClient";
 
-const SESSION_KEY = "care8_active_role"; // <— stores current role until tab closed
+const SESSION_KEY = "care8_active_role";
 
 interface Message {
   id: string;
@@ -33,7 +28,7 @@ interface Conversation {
   timestamp: string;
   messages: Message[];
   unread?: boolean;
-  currentStandard: number;
+  currentStandard: number | null; // now optional for standards
 }
 
 export default function App() {
@@ -45,7 +40,7 @@ export default function App() {
   const [privacyPolicyOpen, setPrivacyPolicyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [documentPreviewOpen, setDocumentPreviewOpen] = useState(false);
-  const [completedStandards, setCompletedStandards] = useState<number[]>([]);
+
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
@@ -53,245 +48,161 @@ export default function App() {
   const [inputValue, setInputValue] = useState("");
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
 
-  // ✅ Initialize secure storage & restore role from sessionStorage
+  // init secure storage & restore role
   useEffect(() => {
     (async () => {
       await initializeDefaultCodes();
-      console.log("✅ Secure storage initialized or already exists");
-
       const savedRole = sessionStorage.getItem(SESSION_KEY);
-      if (savedRole === "user" || savedRole === "admin") {
-        setRole(savedRole);
-      }
+      if (savedRole === "user" || savedRole === "admin") setRole(savedRole);
     })();
   }, []);
 
-  // ✅ Helper: Toggle standard completion
-  const toggleStandard = (standardIndex: number) => {
-    setCompletedStandards((prev) =>
-      prev.includes(standardIndex)
-        ? prev.filter((i) => i !== standardIndex)
-        : [...prev, standardIndex]
-    );
-  };
-
-  // ✅ Conversation utilities
+  // utilities
   const getActiveConversation = () =>
     conversations.find((c) => c.id === activeConversationId);
   const getCurrentMessages = () => getActiveConversation()?.messages || [];
 
-  const createNewConversation = (firstMessage?: string) => {
+  const createNewConversation = (title?: string) => {
     const newId = Date.now().toString();
     const newConv: Conversation = {
       id: newId,
-      title: firstMessage
-        ? firstMessage.substring(0, 30) + "..."
-        : "New Conversation",
-      preview: firstMessage || "Start a conversation...",
+      title: title ? title.substring(0, 30) + "..." : "New Conversation",
+      preview: title || "Start a conversation...",
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
       messages: [],
-      currentStandard: 1,
+      currentStandard: null,
     };
     setConversations((prev) => [newConv, ...prev]);
     setActiveConversationId(newId);
     return newId;
   };
 
-  // ✅ Chat handling
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-    let convId = activeConversationId;
-
-    if (!convId) convId = createNewConversation(inputValue);
-
-    const currentConv = conversations.find((c) => c.id === convId);
-    if (!currentConv) return;
-
-    const userMessage: Message = {
+  const addUserMessage = (convId: string, text: string) => {
+    const msg: Message = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: text,
       sender: "user",
       timestamp: new Date(),
     };
-
     setConversations((prev) =>
-      prev.map((conv) =>
-        conv.id === convId
+      prev.map((c) =>
+        c.id === convId
           ? {
-              ...conv,
-              messages: [...conv.messages, userMessage],
-              preview: inputValue,
+              ...c,
+              messages: [...c.messages, msg],
+              preview: text,
               timestamp: new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               }),
             }
-          : conv
+          : c
       )
     );
-    setInputValue("");
-
-    const currentConvState = {
-      standard: currentConv.currentStandard,
-      messageCount: currentConv.messages.length,
-    };
-
-    setTimeout(() => {
-      if (currentConvState.messageCount > 0) {
-        if (currentConvState.standard < 4) {
-          const feedbackMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            content: generateTransitionFeedback(currentConvState.standard),
-            sender: "bot",
-            timestamp: new Date(),
-          };
-
-          setConversations((prev) =>
-            prev.map((conv) =>
-              conv.id === convId
-                ? {
-                    ...conv,
-                    messages: [...conv.messages, feedbackMessage],
-                    preview: feedbackMessage.content.substring(0, 50) + "...",
-                    timestamp: new Date().toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }),
-                  }
-                : conv
-            )
-          );
-
-          setTimeout(() => {
-            const newStandard = currentConvState.standard + 1;
-            const nextStandardMessage: Message = {
-              id: (Date.now() + 2).toString(),
-              content:
-                standardPrompts[newStandard as keyof typeof standardPrompts],
-              sender: "bot",
-              timestamp: new Date(),
-            };
-
-            setConversations((prev) =>
-              prev.map((conv) =>
-                conv.id === convId
-                  ? {
-                      ...conv,
-                      messages: [...conv.messages, nextStandardMessage],
-                      preview:
-                        nextStandardMessage.content.substring(0, 50) + "...",
-                      timestamp: new Date().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }),
-                      currentStandard: newStandard,
-                    }
-                  : conv
-              )
-            );
-
-            const standardIndex = currentConvState.standard - 1;
-            if (!completedStandards.includes(standardIndex)) {
-              setCompletedStandards((prev) => [...prev, standardIndex]);
-            }
-          }, 1500);
-        } else {
-          const finalMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            content: generateFinalFeedback(),
-            sender: "bot",
-            timestamp: new Date(),
-          };
-
-          setConversations((prev) =>
-            prev.map((conv) =>
-              conv.id === convId
-                ? {
-                    ...conv,
-                    messages: [...conv.messages, finalMessage],
-                    preview: finalMessage.content.substring(0, 50) + "...",
-                    timestamp: new Date().toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }),
-                  }
-                : conv
-            )
-          );
-
-          const standardIndex = 3;
-          if (!completedStandards.includes(standardIndex)) {
-            setCompletedStandards((prev) => [...prev, standardIndex]);
-          }
-        }
-      } else {
-        const botResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          content: standardPrompts[1],
-          sender: "bot",
-          timestamp: new Date(),
-        };
-
-        setConversations((prev) =>
-          prev.map((conv) =>
-            conv.id === convId
-              ? {
-                  ...conv,
-                  messages: [...conv.messages, botResponse],
-                  preview: botResponse.content.substring(0, 50) + "...",
-                  timestamp: new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }),
-                  currentStandard: 1,
-                }
-              : conv
-          )
-        );
-      }
-    }, 1000);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const addBotMessage = (convId: string, text: string) => {
+    const msg: Message = {
+      id: Date.now().toString(),
+      content: text,
+      sender: "bot",
+      timestamp: new Date(),
+    };
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === convId
+          ? {
+              ...c,
+              messages: [...c.messages, msg],
+              preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            }
+          : c
+      )
+    );
+  };
+
+  const replaceLastBotMessage = (convId: string, text: string) => {
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== convId) return c;
+        const msgs = [...c.messages];
+        for (let i = msgs.length - 1; i >= 0; i--) {
+          if (msgs[i].sender === "bot") {
+            msgs[i] = { ...msgs[i], content: text, timestamp: new Date() };
+            break;
+          }
+        }
+        return {
+          ...c,
+          messages: msgs,
+          preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+      })
+    );
+  };
+
+  // 🔥 unified pipeline
+  const sendToAI = async (
+    promptType:
+      | "standard1"
+      | "standard2"
+      | "standard3"
+      | "standard4"
+      | "freechat",
+    userMessage?: string
+  ) => {
+    let convId = activeConversationId;
+    if (!convId) convId = createNewConversation(userMessage || promptType);
+
+    if (userMessage && userMessage.trim()) addUserMessage(convId, userMessage);
+
+    // temporary “thinking…” message
+    addBotMessage(convId, "🤔 Thinking...");
+
+    try {
+      const reply = await sendMessageToAI(promptType, userMessage);
+      replaceLastBotMessage(convId, reply);
+    } catch (err: any) {
+      replaceLastBotMessage(
+        convId,
+        `❌ Error: ${err?.message || "Failed to reach AI."}`
+      );
     }
   };
 
-  const handleStandardClick = (prompt: string) => {
-    let convId = activeConversationId;
-    if (!convId) convId = createNewConversation("Start feedback session");
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: Date.now().toString(),
-        content: standardPrompts[1],
-        sender: "bot",
-        timestamp: new Date(),
-      };
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === convId
-            ? {
-                ...conv,
-                messages: [...conv.messages, botResponse],
-                preview: "Standard 1: Professionalism & Responsibility",
-                timestamp: new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-                currentStandard: 1,
-              }
-            : conv
-        )
-      );
-    }, 100);
+  // called when user presses Enter/send
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    const text = inputValue;
+    setInputValue("");
+    // all manual typing goes through freechat
+    sendToAI("freechat", text);
   };
 
-  // ✅ show login screen if not logged in yet
+  // fired by your standards UI (4 buttons in RightPanel)
+  const handleStandardClick = (promptLabel: string) => {
+    // map the label to a standard type deterministically
+    const label = (promptLabel || "").toLowerCase();
+    let type: "standard1" | "standard2" | "standard3" | "standard4" =
+      "standard1";
+    if (label.includes("2")) type = "standard2";
+    else if (label.includes("3")) type = "standard3";
+    else if (label.includes("4")) type = "standard4";
+    sendToAI(type);
+  };
+
+  // gate by access
   if (!role) {
     return (
       <AccessPage
@@ -303,12 +214,11 @@ export default function App() {
     );
   }
 
-  // ✅ show admin page if selected
   if (currentPage === "admin" && role === "admin") {
     return <AdminPage onBackClick={() => setCurrentPage("main")} />;
   }
 
-  // ✅ main app
+  // main app UI
   return (
     <div className="flex h-screen overflow-hidden">
       <PermanentSidebar
@@ -330,7 +240,12 @@ export default function App() {
           inputValue={inputValue}
           onInputChange={setInputValue}
           onSendMessage={handleSendMessage}
-          onKeyPress={handleKeyPress}
+          onKeyPress={(e: React.KeyboardEvent) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
           onStandardClick={handleStandardClick}
           showMobileControls={true}
           onToggleSidebar={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
@@ -340,9 +255,9 @@ export default function App() {
       <ProgressModal
         isOpen={progressOpen}
         onClose={() => setProgressOpen(false)}
-        completedStandards={completedStandards}
-        onToggleStandard={toggleStandard}
-        currentStandard={getActiveConversation()?.currentStandard}
+        completedStandards={[]}
+        onToggleStandard={() => {}}
+        currentStandard={undefined}
       />
       <GuidelinesModal
         isOpen={guidelinesOpen}
