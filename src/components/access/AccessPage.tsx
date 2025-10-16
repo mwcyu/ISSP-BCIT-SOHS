@@ -21,8 +21,8 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
   const [message, setMessage] = useState("");
   const [showRecoveryPrompt, setShowRecoveryPrompt] = useState(false);
   const [recoveryVerified, setRecoveryVerified] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false); // 👈 NEW
 
-  // ✅ User login
   const handleUserLogin = async () => {
     const ok = await verifyUser(userInput);
     if (ok) {
@@ -32,7 +32,6 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     }
   };
 
-  // ✅ Admin login
   const handleAdminLogin = async () => {
     const ok = await verifyAdmin(adminInput);
     if (ok) {
@@ -42,7 +41,6 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     }
   };
 
-  // ✅ Handle recovery verification
   const handleRecoverySubmit = async () => {
     const ok = await verifyRecovery(recoveryInput);
     if (ok) {
@@ -56,7 +54,6 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     }
   };
 
-  // ✅ Handle saving new admin/user codes
   const handleRecoverySave = async () => {
     if (!newAdminCode.trim() || !newUserCode.trim()) {
       setMessage("⚠ Please fill in both new codes.");
@@ -78,49 +75,110 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     }
   };
 
+  // Reset message when switching views
+  const clearMessage = () => setMessage("");
+
   return (
     <div className="access-page">
       <div className="access-container">
         <h1 className="access-title">🔐 Access Portal</h1>
 
-        {/* === Normal login section === */}
+        {/* === User Login (always visible) === */}
         {!showRecoveryPrompt && !recoveryVerified && (
-          <>
-            <div>
-              <label className="access-label">User Access Code</label>
-              <input
-                type="password"
-                className="access-input"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-              />
-              <button onClick={handleUserLogin} className="access-btn user">
-                Enter as User
-              </button>
-            </div>
-
-            <div className="recovery-section">
-              <label className="access-label">Admin Access Code</label>
-              <input
-                type="password"
-                className="access-input"
-                value={adminInput}
-                onChange={(e) => setAdminInput(e.target.value)}
-              />
-              <button onClick={handleAdminLogin} className="access-btn admin">
-                Enter as Admin
-              </button>
-
-              <button
-                onClick={() => setShowRecoveryPrompt(true)}
-                className="access-btn text-link">
-                Forgot Admin Code?
-              </button>
-            </div>
-          </>
+          <div>
+            <label className="access-label">User Access Code</label>
+            <input
+              type="password"
+              className="access-input"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+            />
+            <button onClick={handleUserLogin} className="access-btn user">
+              Enter as User
+            </button>
+          </div>
         )}
 
-        {/* === Step 1: Enter recovery code === */}
+        {/* === Admin Login Toggle (hidden by default) === */}
+        {/* {!showRecoveryPrompt && !recoveryVerified && (
+          <div className="admin-toggle-section">
+            <button
+              onClick={() => {
+                setShowAdminLogin(!showAdminLogin);
+                clearMessage();
+              }}
+              className="access-btn text-link"
+            >
+              {showAdminLogin ? "▲ Hide Admin Login" : "▼ Show Admin Login"}
+            </button>
+
+            {showAdminLogin && (
+              <div className="admin-login-section">
+                <label className="access-label">Admin Access Code</label>
+                <input
+                  type="password"
+                  className="access-input"
+                  value={adminInput}
+                  onChange={(e) => setAdminInput(e.target.value)}
+                />
+                <button onClick={handleAdminLogin} className="access-btn admin">
+                  Enter as Admin
+                </button>
+
+                <button
+                  onClick={() => setShowRecoveryPrompt(true)}
+                  className="access-btn text-link"
+                >
+                  Forgot Admin Code?
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        // Inside your return, replace the admin toggle section with this: */}
+
+        {!showRecoveryPrompt && !recoveryVerified && (
+          <div className="admin-toggle-section">
+            <button
+              onClick={() => {
+                setShowAdminLogin(!showAdminLogin);
+                setMessage("");
+              }}
+              className="access-btn text-link"
+              aria-expanded={showAdminLogin}
+            >
+              {showAdminLogin ? (
+                <>▲ Hide Admin Access</>
+              ) : (
+                <>🔐 Need Admin Access?</>
+              )}
+            </button>
+
+            {showAdminLogin && (
+              <div className="admin-login-section">
+                <label className="access-label">Admin Access Code</label>
+                <input
+                  type="password"
+                  className="access-input"
+                  value={adminInput}
+                  onChange={(e) => setAdminInput(e.target.value)}
+                />
+                <button onClick={handleAdminLogin} className="access-btn admin">
+                  Log In as Admin
+                </button>
+
+                <button
+                  onClick={() => setShowRecoveryPrompt(true)}
+                  className="access-btn text-link"
+                >
+                  🔑 Forgot Admin Code?
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* === Recovery Flow === */}
         {showRecoveryPrompt && !recoveryVerified && (
           <div className="recovery-section">
             <label className="access-label">Enter Recovery Code</label>
@@ -132,7 +190,8 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
             />
             <button
               onClick={handleRecoverySubmit}
-              className="access-btn recovery">
+              className="access-btn recovery"
+            >
               Verify Recovery Code
             </button>
             <button
@@ -141,14 +200,14 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 setRecoveryInput("");
                 setMessage("");
               }}
-              className="access-btn text-link">
+              className="access-btn text-link"
+            >
               Cancel
             </button>
             {message && <p className="access-message">{message}</p>}
           </div>
         )}
 
-        {/* === Step 2: Reset admin/user codes === */}
         {recoveryVerified && (
           <div className="recovery-reset-section">
             <h3 className="access-subtitle">Reset Access Codes</h3>
@@ -169,9 +228,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
               onChange={(e) => setNewUserCode(e.target.value)}
             />
 
-            <button
-              onClick={handleRecoverySave}
-              className="access-btn save-btn">
+            <button onClick={handleRecoverySave} className="access-btn save-btn">
               💾 Save New Codes
             </button>
 
@@ -184,7 +241,8 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 setNewUserCode("");
                 setMessage("");
               }}
-              className="access-btn text-link">
+              className="access-btn text-link"
+            >
               Cancel
             </button>
 
@@ -192,7 +250,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
           </div>
         )}
 
-        {/* === Global message display === */}
+        {/* Global message (only when not in recovery flow) */}
         {!recoveryVerified && !showRecoveryPrompt && message && (
           <p className="access-message">{message}</p>
         )}
