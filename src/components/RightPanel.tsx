@@ -126,7 +126,7 @@ export function RightPanel({
                 {standards.map((standard) => (
                   <div
                     key={standard.id}
-                    onClick={() => onStandardClick?.(standard.prompt)}
+                    onClick={() => onStandardClick?.(standard.id)}
                     className="p-4 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all border-l-4 border-l-[#003E6B] hover:border-l-[#ffd700] flex flex-col h-full">
                     <h5 className="text-gray-800 mb-1">{standard.title}</h5>
                     <p className="text-sm text-gray-600">{standard.subtitle}</p>
