@@ -1,6 +1,17 @@
+# LangChain core framework
 langchain
+langchain-openai
+langchain-chroma
+langchain-community
+
+# LangGraph for stateful workflows
 langgraph
-openai
-chromadb
-python-dotenv
+
+# Document processing
 pypdf
+unstructured==0.18.15
+markdown==3.9
+
+# Environment configuration
+python-dotenv
+
