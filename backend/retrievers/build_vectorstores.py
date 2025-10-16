@@ -3,13 +3,13 @@ import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import Chroma
 
 VECTOR_DIR = "vectorstores"
 os.makedirs(VECTOR_DIR, exist_ok=True)
 
 def _create_vectorstore(pdf_path, name, embedding):
-    """Build a FAISS store from PDF and save it."""
+    """Build a Chroma store from PDF and persist it."""
     print(f"Building vectorstore for {name} ...")
     loader = PyPDFLoader(pdf_path)
     docs = loader.load()
@@ -17,14 +17,19 @@ def _create_vectorstore(pdf_path, name, embedding):
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
     chunks = splitter.split_documents(docs)
 
-    store = FAISS.from_documents(chunks, embedding)
-    save_path = os.path.join(VECTOR_DIR, name)
-    store.save_local(save_path)
-    print(f"Saved {name} vectorstore to {save_path}")
+    # Create Chroma vectorstore with persistence
+    persist_directory = os.path.join(VECTOR_DIR, name)
+    store = Chroma.from_documents(
+        documents=chunks,
+        embedding=embedding,
+        persist_directory=persist_directory,
+        collection_name=name
+    )
+    print(f"Saved {name} vectorstore to {persist_directory}")
     return store
 
 def build_or_load_vectorstores():
-    """Load cached FAISS vectorstores if available, otherwise build them."""
+    """Load cached Chroma vectorstores if available, otherwise build them."""
     embedding = OpenAIEmbeddings(model="text-embedding-3-small")
 
     pdfs = {
@@ -35,12 +40,16 @@ def build_or_load_vectorstores():
     stores = {}
 
     for name, path in pdfs.items():
-        vector_path = os.path.join(VECTOR_DIR, name)
-        index_file = os.path.join(vector_path, "index.faiss")
+        persist_directory = os.path.join(VECTOR_DIR, name)
 
-        if os.path.exists(index_file):
+        # Check if the Chroma database already exists
+        if os.path.exists(persist_directory) and os.path.exists(os.path.join(persist_directory, "chroma.sqlite3")):
             print(f"Loading existing vectorstore for {name} ...")
-            store = FAISS.load_local(vector_path, embedding, allow_dangerous_deserialization=True)
+            store = Chroma(
+                persist_directory=persist_directory,
+                embedding_function=embedding,
+                collection_name=name
+            )
         else:
             store = _create_vectorstore(path, name, embedding)
         stores[name] = store
