@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "langchain_openai",
+    "./" 
+  ],
+  "graphs": {
+    "feedback": "./graph.py:create_feedback_graph"
+  },
+  "env": "./.env"
+}

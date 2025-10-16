@@ -1,0 +1,6 @@
+langchain
+langgraph
+openai
+faiss-cpu
+python-dotenv
+pypdf
