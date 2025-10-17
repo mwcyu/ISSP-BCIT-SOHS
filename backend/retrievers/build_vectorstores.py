@@ -1,9 +1,9 @@
 # retrievers/build_vectorstores.py
 import os
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
 
 VECTOR_DIR = "vectorstores"
 os.makedirs(VECTOR_DIR, exist_ok=True)
