@@ -40,7 +40,7 @@ export function ChatArea({ messages, onSuggestedPrompt }: ChatAreaProps) {
           </div>
           
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <h4 className="font-medium text-gray-800 mb-3">Suggested prompts:</h4>
+            {/* <h4 className="font-medium text-gray-800 mb-3">Suggested prompts:</h4> */}
             <div className="space-y-2">
               {suggestedPrompts.map((prompt, index) => (
                 <button

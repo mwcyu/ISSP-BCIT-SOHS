@@ -5,21 +5,24 @@ import {
   Shield,
   BarChart3,
   Eye,
-  X,
   Home,
-  UserCog, // added icon for admin
+  UserCog,
+  ChevronLeft,
+  ChevronRight,
+  FileQuestion,
 } from "lucide-react";
 import bcitLogo from "../assets/bcit-logo.png";
 
 interface PermanentSidebarProps {
-  role?: "user" | "admin" | null; // NEW
+  role?: "user" | "admin" | null;
   onProgressClick: () => void;
   onGuidelinesClick: () => void;
   onPrivacyPolicyClick: () => void;
   onSettingsClick: () => void;
   onDocumentPreviewClick: () => void;
   onHomeClick: () => void;
-  onAdminClick?: () => void; // NEW
+  onFAQClick: () => void;
+  onAdminClick?: () => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
@@ -32,6 +35,7 @@ export function PermanentSidebar({
   onSettingsClick,
   onDocumentPreviewClick,
   onHomeClick,
+  onFAQClick,
   onAdminClick,
   isCollapsed,
   onToggleCollapse,
@@ -40,16 +44,21 @@ export function PermanentSidebar({
     <div
       className={`bg-[#003E6B] text-white h-screen flex flex-col transition-all duration-300 relative ${
         isCollapsed ? "w-16" : "w-64 sm:w-64"
-      }`}>
-      {/* Close button */}
-      {!isCollapsed && (
-        <button
-          onClick={onToggleCollapse}
-          className="absolute top-4 right-4 z-10 p-1.5 hover:bg-[#002a4d] rounded-lg transition-colors hidden lg:flex"
-          title="Minimize Sidebar">
-          <X className="w-5 h-5 text-gray-300" />
-        </button>
-      )}
+      }`}
+    >
+      {/* Toggle button - arrow */}
+      <button
+        onClick={onToggleCollapse}
+        className="absolute top-4 right-4 z-10 p-1.5 rounded-full transition-colors hidden lg:flex bg-black/50 flex items-center justify-center"
+
+        title={isCollapsed ? "Expand Sidebar" : "Minimize Sidebar"}
+      >
+        {isCollapsed ? (
+          <ChevronRight className="w-5 h-5 text-gray-300" />
+        ) : (
+          <ChevronLeft className="w-5 h-5 text-gray-300" />
+        )}
+      </button>
 
       {/* Profile Section */}
       <div className="pt-12 px-6 pb-6 border-b border-gray-700">
@@ -68,18 +77,16 @@ export function PermanentSidebar({
       {/* Menu Section */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
-          {!isCollapsed && (
-            <p className="text-xs text-gray-400 mb-3 px-2">MENU</p>
-          )}
+          {!isCollapsed && <p className="text-xs text-gray-400 mb-3 px-2">MENU</p>}
           <div className="space-y-1">
             {/* Home */}
-            <a href="/">
+            <a href="/" onClick={onHomeClick}>
               <button
-                onClick={onHomeClick}
                 className={`w-full flex items-center ${
                   isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
                 } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-                title={isCollapsed ? "Home" : ""}>
+                title={isCollapsed ? "Home" : ""}
+              >
                 <Home
                   className="transition-none flex-shrink-0"
                   style={{
@@ -91,22 +98,24 @@ export function PermanentSidebar({
               </button>
             </a>
 
-            {/* Progress */}
-            <button
-              onClick={onProgressClick}
-              className={`w-full flex items-center ${
-                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
-              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-              title={isCollapsed ? "Progress" : ""}>
-              <BarChart3
-                className="transition-none flex-shrink-0"
-                style={{
-                  width: isCollapsed ? "18px" : "16px",
-                  height: isCollapsed ? "18px" : "16px",
-                }}
-              />
-              {!isCollapsed && <span>Progress</span>}
-            </button>
+      {/* Progress */}
+      <button
+        onClick={onProgressClick}
+        className={`w-full flex items-center ${
+          isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+        } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+        title={isCollapsed ? "Progress" : ""}
+      >
+        <BarChart3
+          className="transition-none flex-shrink-0"
+          style={{
+            width: isCollapsed ? "18px" : "16px",
+            height: isCollapsed ? "18px" : "16px",
+          }}
+        />
+        {!isCollapsed && <span>Progress</span>}
+      </button>
+
 
             {/* Document Preview */}
             <button
@@ -114,7 +123,8 @@ export function PermanentSidebar({
               className={`w-full flex items-center ${
                 isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
               } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-              title={isCollapsed ? "Document Preview" : ""}>
+              title={isCollapsed ? "Document Preview" : ""}
+            >
               <Eye
                 className="transition-none flex-shrink-0"
                 style={{
@@ -125,14 +135,15 @@ export function PermanentSidebar({
               {!isCollapsed && <span>Document Preview</span>}
             </button>
 
-            {/* ✅ Admin Button (only visible if role === "admin") */}
+            {/* Admin Panel (only for admin) */}
             {role === "admin" && (
               <button
                 onClick={onAdminClick}
                 className={`w-full flex items-center ${
                   isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
                 } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-                title={isCollapsed ? "Admin Panel" : ""}>
+                title={isCollapsed ? "Admin Panel" : ""}
+              >
                 <UserCog
                   className="transition-none flex-shrink-0"
                   style={{
@@ -152,28 +163,15 @@ export function PermanentSidebar({
             <p className="text-xs text-gray-400 mb-3 px-2">SUPPORT</p>
           )}
           <div className="space-y-1">
-            <button
-              onClick={onGuidelinesClick}
-              className={`w-full flex items-center ${
-                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
-              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-              title={isCollapsed ? "Guidelines" : ""}>
-              <FileText
-                className="transition-none flex-shrink-0"
-                style={{
-                  width: isCollapsed ? "18px" : "16px",
-                  height: isCollapsed ? "18px" : "16px",
-                }}
-              />
-              {!isCollapsed && <span>Guidelines</span>}
-            </button>
 
+            {/* Privacy Policy */}
             <button
               onClick={onPrivacyPolicyClick}
               className={`w-full flex items-center ${
                 isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
               } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
-              title={isCollapsed ? "Privacy Policy" : ""}>
+              title={isCollapsed ? "Privacy Policy" : ""}
+            >
               <Shield
                 className="transition-none flex-shrink-0"
                 style={{
@@ -183,6 +181,26 @@ export function PermanentSidebar({
               />
               {!isCollapsed && <span>Privacy Policy</span>}
             </button>
+
+            {/* FAQ */}
+            <button
+              onClick={onFAQClick}
+              className={`w-full flex items-center ${
+                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+              title={isCollapsed ? "FAQ" : ""}
+            >
+              <FileQuestion
+                className="transition-none flex-shrink-0"
+                style={{
+                  width: isCollapsed ? "18px" : "16px",
+                  height: isCollapsed ? "18px" : "16px",
+                }}
+              />
+              {!isCollapsed && <span>FAQ</span>}
+            </button>
+
+            
           </div>
         </div>
       </div>
