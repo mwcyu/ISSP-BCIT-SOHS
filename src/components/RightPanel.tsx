@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Send, Bot, User, Menu, ArrowLeft } from "lucide-react";
 
 interface Message {
@@ -64,12 +64,19 @@ export function RightPanel({
   showMobileControls = false,
   onToggleSidebar,
 }: RightPanelProps) {
+  // 👇 New reference for auto-scroll
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // 👇 Auto-scroll effect (runs when messages change)
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="flex-1 bg-[#ffff] flex flex-col h-screen">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {/* Mobile Menu Button */}
           {showMobileControls && (
             <button
               onClick={onMobileMenuClick}
@@ -79,7 +86,6 @@ export function RightPanel({
             </button>
           )}
 
-          {/* Desktop Toggle Button */}
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
@@ -174,6 +180,8 @@ export function RightPanel({
                 )}
               </div>
             ))}
+            {/* 👇 Auto-scroll anchor (always at bottom) */}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>

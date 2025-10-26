@@ -59,9 +59,12 @@ export default function App() {
 
   // ✅ Handle logout
   const handleLogout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem("care8_active_role"); // remove login session
     setRole(null);
     setCurrentPage("main");
+    setConversations([]); // 🔥 clear all chat history
+    setActiveConversationId(null);
+    setInputValue("");
   };
 
   // ====== Utility Functions ======
@@ -236,7 +239,7 @@ export default function App() {
         onDocumentPreviewClick={() => setDocumentPreviewOpen(true)}
         onHomeClick={() => setCurrentPage("main")}
         onAdminClick={() => setCurrentPage("admin")}
-        onLogoutClick={handleLogout} // ✅ NEW
+        onLogoutClick={handleLogout} // ✅ ADDED
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
