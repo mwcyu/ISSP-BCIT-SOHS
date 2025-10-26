@@ -7,19 +7,21 @@ import {
   Eye,
   X,
   Home,
-  UserCog, // added icon for admin
+  UserCog,
+  LogOut, // ✅ NEW icon
 } from "lucide-react";
 import bcitLogo from "../assets/bcit-logo.png";
 
 interface PermanentSidebarProps {
-  role?: "user" | "admin" | null; // NEW
+  role?: "user" | "admin" | null;
   onProgressClick: () => void;
   onGuidelinesClick: () => void;
   onPrivacyPolicyClick: () => void;
   onSettingsClick: () => void;
   onDocumentPreviewClick: () => void;
   onHomeClick: () => void;
-  onAdminClick?: () => void; // NEW
+  onAdminClick?: () => void;
+  onLogoutClick?: () => void; // ✅ NEW
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
@@ -33,6 +35,7 @@ export function PermanentSidebar({
   onDocumentPreviewClick,
   onHomeClick,
   onAdminClick,
+  onLogoutClick,
   isCollapsed,
   onToggleCollapse,
 }: PermanentSidebarProps) {
@@ -60,6 +63,9 @@ export function PermanentSidebar({
           {!isCollapsed && (
             <div>
               <p className="text-lg text-gray-300 font-bold">Feedback Helper</p>
+              {role && (
+                <p className="text-xs text-gray-400 capitalize">{role} mode</p>
+              )}
             </div>
           )}
         </div>
@@ -125,7 +131,7 @@ export function PermanentSidebar({
               {!isCollapsed && <span>Document Preview</span>}
             </button>
 
-            {/* ✅ Admin Button (only visible if role === "admin") */}
+            {/* Admin Button (only visible if role === "admin") */}
             {role === "admin" && (
               <button
                 onClick={onAdminClick}
@@ -187,13 +193,24 @@ export function PermanentSidebar({
         </div>
       </div>
 
-      {/* Footer */}
-      {!isCollapsed && (
-        <div className="p-4 border-t border-gray-700 text-xs text-gray-400">
-          <p>Feedback Helper</p>
-          <p className="mt-1">Created by Team Care8</p>
-        </div>
-      )}
+      {/* ✅ Logout Section (always visible at bottom) */}
+      <div className="p-4 border-t border-gray-700">
+        <button
+          onClick={onLogoutClick}
+          className={`w-full flex items-center ${
+            isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+          } px-3 rounded-lg text-gray-300 hover:bg-[#660000] hover:text-white transition-colors`}
+          title={isCollapsed ? "Logout" : ""}>
+          <LogOut
+            className="transition-none flex-shrink-0"
+            style={{
+              width: isCollapsed ? "18px" : "16px",
+              height: isCollapsed ? "18px" : "16px",
+            }}
+          />
+          {!isCollapsed && <span>Logout</span>}
+        </button>
+      </div>
     </div>
   );
 }

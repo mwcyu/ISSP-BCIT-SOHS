@@ -28,7 +28,7 @@ interface Conversation {
   timestamp: string;
   messages: Message[];
   unread?: boolean;
-  currentStandard: number | null; // now optional for standards
+  currentStandard: number | null;
 }
 
 export default function App() {
@@ -48,7 +48,7 @@ export default function App() {
   const [inputValue, setInputValue] = useState("");
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
 
-  // init secure storage & restore role
+  // ✅ Initialize secure storage & restore saved role
   useEffect(() => {
     (async () => {
       await initializeDefaultCodes();
@@ -57,7 +57,14 @@ export default function App() {
     })();
   }, []);
 
-  // utilities
+  // ✅ Handle logout
+  const handleLogout = () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    setRole(null);
+    setCurrentPage("main");
+  };
+
+  // ====== Utility Functions ======
   const getActiveConversation = () =>
     conversations.find((c) => c.id === activeConversationId);
   const getCurrentMessages = () => getActiveConversation()?.messages || [];
@@ -104,7 +111,7 @@ export default function App() {
     );
   };
 
-  const addBotMessage = (convId: string, text: any) => {
+  const addBotMessage = (convId: string, text: string) => {
     const msg: Message = {
       id: Date.now().toString(),
       content: text,
@@ -128,7 +135,7 @@ export default function App() {
     );
   };
 
-  const replaceLastBotMessage = (convId: string, text: any) => {
+  const replaceLastBotMessage = (convId: string, text: string) => {
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id !== convId) return c;
@@ -142,7 +149,7 @@ export default function App() {
         return {
           ...c,
           messages: msgs,
-          preview: text.substring(0) + (text.length > 50 ? "..." : ""),
+          preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
           timestamp: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -152,7 +159,7 @@ export default function App() {
     );
   };
 
-  // 🔥 unified pipeline
+  // ====== Unified AI message pipeline ======
   const sendToAI = async (
     promptType:
       | "standard1"
@@ -181,18 +188,16 @@ export default function App() {
     }
   };
 
-  // called when user presses Enter/send
+  // ====== Handle message send ======
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     const text = inputValue;
     setInputValue("");
-    // all manual typing goes through freechat
     sendToAI("freechat", text);
   };
 
-  // fired by your standards UI (4 buttons in RightPanel)
+  // ====== Handle standard buttons ======
   const handleStandardClick = (promptLabel: string) => {
-    // map the label to a standard type deterministically
     const label = (promptLabel || "").toLowerCase();
     let type: "standard1" | "standard2" | "standard3" | "standard4" =
       "standard1";
@@ -202,7 +207,7 @@ export default function App() {
     sendToAI(type);
   };
 
-  // gate by access
+  // ====== Login Gate ======
   if (!role) {
     return (
       <AccessPage
@@ -214,11 +219,12 @@ export default function App() {
     );
   }
 
+  // ====== Admin Panel ======
   if (currentPage === "admin" && role === "admin") {
     return <AdminPage onBackClick={() => setCurrentPage("main")} />;
   }
 
-  // main app UI
+  // ====== Main App UI ======
   return (
     <div className="flex h-screen overflow-hidden">
       <PermanentSidebar
@@ -230,6 +236,7 @@ export default function App() {
         onDocumentPreviewClick={() => setDocumentPreviewOpen(true)}
         onHomeClick={() => setCurrentPage("main")}
         onAdminClick={() => setCurrentPage("admin")}
+        onLogoutClick={handleLogout} // ✅ NEW
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
@@ -252,6 +259,7 @@ export default function App() {
         />
       </div>
 
+      {/* ====== Modals ====== */}
       <ProgressModal
         isOpen={progressOpen}
         onClose={() => setProgressOpen(false)}
