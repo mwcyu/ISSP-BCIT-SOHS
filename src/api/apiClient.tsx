@@ -1,18 +1,29 @@
+import { getSessionId } from "../utils/session";
+
 export async function sendMessageToAI(
   promptType: "standard1" | "standard2" | "standard3" | "standard4" | "freechat",
   userMessage?: string
 ): Promise<string> {
-  const res = await fetch("http://localhost:5000/api/chat", {
+  // 🔗 replace this with your friend’s webhook URL
+  const webhookUrl = "https://ricejoj198.app.n8n.cloud/webhook/e27c918a-091a-4f8e-8052-298205d7d997";
+  const sessionId = getSessionId();
+  const chatInput = userMessage
+  const res = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ promptType, userMessage }),
+    body: JSON.stringify({ sessionId, promptType, chatInput }),
   });
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Chat API error: ${res.status} ${text}`);
+    throw new Error(`Webhook error: ${res.status} ${text}`);
   }
 
-  const data = await res.json();
-  return data.reply ?? "";
+  // ✅ n8n should return JSON like: { "reply": "Hello!" }
+  const data = await res.json().catch(() => ({}));
+
+
+  console.log("n8n response:", data);
+
+  return data.output ?? "✅ Message sent to n8n workflow!";
 }

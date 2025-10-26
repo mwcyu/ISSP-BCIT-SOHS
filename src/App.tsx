@@ -104,7 +104,7 @@ export default function App() {
     );
   };
 
-  const addBotMessage = (convId: string, text: string) => {
+  const addBotMessage = (convId: string, text: any) => {
     const msg: Message = {
       id: Date.now().toString(),
       content: text,
@@ -128,7 +128,7 @@ export default function App() {
     );
   };
 
-  const replaceLastBotMessage = (convId: string, text: string) => {
+  const replaceLastBotMessage = (convId: string, text: any) => {
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id !== convId) return c;
@@ -142,7 +142,7 @@ export default function App() {
         return {
           ...c,
           messages: msgs,
-          preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
+          preview: text.substring(0) + (text.length > 50 ? "..." : ""),
           timestamp: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
