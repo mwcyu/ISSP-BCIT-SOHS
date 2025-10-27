@@ -49,7 +49,7 @@ export function PermanentSidebar({
       {/* Toggle button - arrow */}
       <button
         onClick={onToggleCollapse}
-        className="absolute top-4 right-4 z-10 p-1.5 rounded-full transition-colors hidden lg:flex bg-black/50 flex items-center justify-center"
+        className="absolute top-4 right-4 z-10 p-1.5 rounded-full transition-colors bg-black/50 flex items-center justify-center"
 
         title={isCollapsed ? "Expand Sidebar" : "Minimize Sidebar"}
       >

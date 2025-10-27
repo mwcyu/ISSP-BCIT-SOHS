@@ -6,6 +6,7 @@ import { GuidelinesModal } from "./components/GuidelinesModal";
 import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import { SettingsModal } from "./components/SettingsModal";
 import { DocumentPreviewModal } from "./components/DocumentPreviewModal";
+import { PromptHelperButton } from "./components/PromptHelperButton";
 import AccessPage from "./components/access/AccessPage";
 import AdminPage from "./components/admin/AdminPage";
 
@@ -62,7 +63,7 @@ export default function App() {
     conversations.find((c) => c.id === activeConversationId);
   const getCurrentMessages = () => getActiveConversation()?.messages || [];
 
-  const createNewConversation = (title?: string) => {
+  const createNewConversation = (title?: string, standard: number | null = null) => {
     const newId = Date.now().toString();
     const newConv: Conversation = {
       id: newId,
@@ -73,7 +74,7 @@ export default function App() {
         minute: "2-digit",
       }),
       messages: [],
-      currentStandard: null,
+      currentStandard: standard,
     };
     setConversations((prev) => [newConv, ...prev]);
     setActiveConversationId(newId);
@@ -192,13 +193,26 @@ export default function App() {
 
   // fired by your standards UI (4 buttons in RightPanel)
   const handleStandardClick = (promptLabel: string) => {
-    // map the label to a standard type deterministically
     const label = (promptLabel || "").toLowerCase();
-    let type: "standard1" | "standard2" | "standard3" | "standard4" =
-      "standard1";
-    if (label.includes("2")) type = "standard2";
-    else if (label.includes("3")) type = "standard3";
-    else if (label.includes("4")) type = "standard4";
+    let type: "standard1" | "standard2" | "standard3" | "standard4" = "standard1";
+    let standardNum = 1;
+    if (label.includes("2")) { type = "standard2"; standardNum = 2; }
+    else if (label.includes("3")) { type = "standard3"; standardNum = 3; }
+    else if (label.includes("4")) { type = "standard4"; standardNum = 4; }
+  
+    // Create conversation with standard number
+    let convId = activeConversationId;
+    if (!convId) {
+      convId = createNewConversation(`Standard ${standardNum}`, standardNum);
+    } else {
+      // Or update existing conversation's standard
+      setConversations(prev =>
+        prev.map(c =>
+          c.id === convId ? { ...c, currentStandard: standardNum } : c
+        )
+      );
+    }
+  
     sendToAI(type);
   };
 
@@ -233,7 +247,7 @@ export default function App() {
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
-
+  
       <div className="flex-1 flex flex-col">
         <RightPanel
           messages={getCurrentMessages()}
@@ -275,6 +289,8 @@ export default function App() {
         isOpen={documentPreviewOpen}
         onClose={() => setDocumentPreviewOpen(false)}
       />
+      {/* <PromptHelperButton currentStandard={getActiveConversation()?.currentStandard} /> */}
+      <PromptHelperButton currentStandard={1} />
     </div>
   );
 }
