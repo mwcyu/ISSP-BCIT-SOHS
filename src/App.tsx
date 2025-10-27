@@ -29,7 +29,7 @@ interface Conversation {
   timestamp: string;
   messages: Message[];
   unread?: boolean;
-  currentStandard: number | null; // now optional for standards
+  currentStandard: number | null;
 }
 
 export default function App() {
@@ -49,7 +49,7 @@ export default function App() {
   const [inputValue, setInputValue] = useState("");
   const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
 
-  // init secure storage & restore role
+  // ✅ Initialize secure storage & restore saved role
   useEffect(() => {
     (async () => {
       await initializeDefaultCodes();
@@ -58,7 +58,17 @@ export default function App() {
     })();
   }, []);
 
-  // utilities
+  // ✅ Handle logout
+  const handleLogout = () => {
+    sessionStorage.removeItem("care8_active_role"); // remove login session
+    setRole(null);
+    setCurrentPage("main");
+    setConversations([]); // 🔥 clear all chat history
+    setActiveConversationId(null);
+    setInputValue("");
+  };
+
+  // ====== Utility Functions ======
   const getActiveConversation = () =>
     conversations.find((c) => c.id === activeConversationId);
   const getCurrentMessages = () => getActiveConversation()?.messages || [];
@@ -153,7 +163,7 @@ export default function App() {
     );
   };
 
-  // 🔥 unified pipeline
+  // ====== Unified AI message pipeline ======
   const sendToAI = async (
     promptType:
       | "standard1"
@@ -182,16 +192,15 @@ export default function App() {
     }
   };
 
-  // called when user presses Enter/send
+  // ====== Handle message send ======
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     const text = inputValue;
     setInputValue("");
-    // all manual typing goes through freechat
     sendToAI("freechat", text);
   };
 
-  // fired by your standards UI (4 buttons in RightPanel)
+  // ====== Handle standard buttons ======
   const handleStandardClick = (promptLabel: string) => {
     const label = (promptLabel || "").toLowerCase();
     let type: "standard1" | "standard2" | "standard3" | "standard4" = "standard1";
@@ -216,7 +225,7 @@ export default function App() {
     sendToAI(type);
   };
 
-  // gate by access
+  // ====== Login Gate ======
   if (!role) {
     return (
       <AccessPage
@@ -228,11 +237,12 @@ export default function App() {
     );
   }
 
+  // ====== Admin Panel ======
   if (currentPage === "admin" && role === "admin") {
     return <AdminPage onBackClick={() => setCurrentPage("main")} />;
   }
 
-  // main app UI
+  // ====== Main App UI ======
   return (
     <div className="flex h-screen overflow-hidden">
       <PermanentSidebar
@@ -244,6 +254,7 @@ export default function App() {
         onDocumentPreviewClick={() => setDocumentPreviewOpen(true)}
         onHomeClick={() => setCurrentPage("main")}
         onAdminClick={() => setCurrentPage("admin")}
+        onLogoutClick={handleLogout} // ✅ ADDED
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
@@ -266,6 +277,7 @@ export default function App() {
         />
       </div>
 
+      {/* ====== Modals ====== */}
       <ProgressModal
         isOpen={progressOpen}
         onClose={() => setProgressOpen(false)}

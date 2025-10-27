@@ -1,5 +1,5 @@
-import React from 'react';
-import { Send, Bot, User } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import { Send, Bot, User, Menu, ArrowLeft } from "lucide-react";
 
 interface Message {
   id: string;
@@ -15,6 +15,10 @@ interface RightPanelProps {
   onSendMessage: () => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
   onStandardClick?: (prompt: string) => void;
+  onMobileMenuClick?: () => void;
+  onMobileBackClick?: () => void;
+  showMobileControls?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 const standards = [
@@ -55,34 +59,54 @@ export function RightPanel({
   onSendMessage,
   onKeyPress,
   onStandardClick,
+  onMobileMenuClick,
+  onMobileBackClick,
+  showMobileControls = false,
+  onToggleSidebar,
 }: RightPanelProps) {
+  // 👇 New reference for auto-scroll
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // 👇 Auto-scroll effect (runs when messages change)
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="flex-1 bg-[#f5f5dc] flex flex-col h-screen">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        {/* Bot icon container */}
-        <div
-          className="flex items-center justify-center"
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            backgroundColor: '#003E6B',
-            flexShrink: 0,
-          }}
-        >
-          <Bot
-            style={{ width: '20px', height: '20px', color: '#FFD700' }}
-          />
+        <div className="flex items-center gap-2">
+          {showMobileControls && (
+            <button
+              onClick={onMobileMenuClick}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              title="Menu">
+              <Menu className="w-5 h-5 text-gray-700" />
+            </button>
+          )}
+
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors hidden lg:flex"
+              title="Toggle Sidebar">
+              <Menu className="w-5 h-5 text-gray-700" />
+            </button>
+          )}
+
+          <div className="flex -space-x-2">
+            <div className="w-8 h-8 rounded-full bg-[#003E6B] border-2 border-white flex items-center justify-center">
+              <Bot className="w-4 h-4 text-[#ffd700]" />
+            </div>
+          </div>
+          <span className="ml-2 text-gray-700">Feedback Helper</span>
         </div>
 
         {/* Title */}
         <span className="text-lg font-semibold text-gray-800">
           Feedback Helper
         </span>
-      </div>
-
       </div>
 
       {/* Chat Messages */}
@@ -162,6 +186,8 @@ export function RightPanel({
                 )}
               </div>
             ))}
+            {/* 👇 Auto-scroll anchor (always at bottom) */}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>

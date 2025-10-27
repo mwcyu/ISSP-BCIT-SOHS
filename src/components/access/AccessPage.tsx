@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getSessionId } from "../../utils/session";
 import "./AccessPage.css";
 import {
   verifyAdmin,
@@ -26,15 +27,31 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
   const handleUserLogin = async () => {
     const ok = await verifyUser(userInput);
     if (ok) {
+      // 🧹 Clear any previous session ID before making a new one
+      sessionStorage.removeItem("chatSessionId");
+
+      // 🆕 Create new session ID
+      const newSessionId = getSessionId();
+      console.log("🆕 New session started:", newSessionId);
+      
       onLoginSuccess("user");
     } else {
       setMessage("❌ Invalid user code");
     }
   };
 
+
+  // ✅ Admin login
   const handleAdminLogin = async () => {
     const ok = await verifyAdmin(adminInput);
     if (ok) {
+      // 🧹 Clear any previous session ID before making a new one
+      sessionStorage.removeItem("chatSessionId");
+
+      // 🆕 Create new session ID
+      const newSessionId = getSessionId();
+      console.log("🆕 New session started:", newSessionId);
+      
       onLoginSuccess("admin");
     } else {
       setMessage("❌ Invalid admin code");
