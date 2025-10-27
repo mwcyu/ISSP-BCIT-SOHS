@@ -1,3 +1,4 @@
+node_modules
 # Python
 __pycache__/
 *.py[cod]
@@ -107,3 +108,4 @@ ISSP/
 ENHANCEMENT_GUIDE.md
 ENHANCEMENTS_SUMMARY.md
 SIMPLIFICATION_SUMMARY.md
+agent-chat-ui/
