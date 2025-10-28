@@ -7,6 +7,7 @@ import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import { SettingsModal } from "./components/SettingsModal";
 import { DocumentPreviewModal } from "./components/DocumentPreviewModal";
 import { PromptHelperButton } from "./components/PromptHelperButton";
+import { FAQModal } from "./components/FAQModal";
 import AccessPage from "./components/access/AccessPage";
 import AdminPage from "./components/admin/AdminPage";
 
@@ -41,6 +42,8 @@ export default function App() {
   const [privacyPolicyOpen, setPrivacyPolicyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [documentPreviewOpen, setDocumentPreviewOpen] = useState(false);
+
+  const [faqOpen, setFaqOpen] = useState(false);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<
@@ -252,6 +255,7 @@ export default function App() {
         onPrivacyPolicyClick={() => setPrivacyPolicyOpen(true)}
         onSettingsClick={() => setSettingsOpen(true)}
         onDocumentPreviewClick={() => setDocumentPreviewOpen(true)}
+        onFAQClick={() => setFaqOpen(true)}      // 👈 Add this line
         onHomeClick={() => setCurrentPage("main")}
         onAdminClick={() => setCurrentPage("admin")}
         onLogoutClick={handleLogout} // ✅ ADDED
@@ -301,6 +305,7 @@ export default function App() {
         isOpen={documentPreviewOpen}
         onClose={() => setDocumentPreviewOpen(false)}
       />
+      <FAQModal isOpen={faqOpen} onClose={() => setFaqOpen(false)} />
       {/* <PromptHelperButton currentStandard={getActiveConversation()?.currentStandard} /> */}
       <PromptHelperButton currentStandard={1} />
     </div>

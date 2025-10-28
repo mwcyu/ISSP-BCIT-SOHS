@@ -32,9 +32,7 @@ interface PermanentSidebarProps {
 export function PermanentSidebar({
   role,
   onProgressClick,
-  onGuidelinesClick,
   onPrivacyPolicyClick,
-  onSettingsClick,
   onDocumentPreviewClick,
   onHomeClick,
   onFAQClick,
