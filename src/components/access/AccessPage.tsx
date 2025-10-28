@@ -10,7 +10,7 @@ import {
 } from "../../utils/accessStorage";
 
 interface AccessPageProps {
-  onLoginSuccess: (role: "user" | "admin") => void;
+  onLoginSuccess: (role: "preceptor" | "admin") => void;
 }
 
 export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
@@ -34,9 +34,9 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
       const newSessionId = getSessionId();
       console.log("🆕 New session started:", newSessionId);
       
-      onLoginSuccess("user");
+      onLoginSuccess("preceptor");
     } else {
-      setMessage("❌ Invalid user code");
+      setMessage("❌ Invalid preceptor code");
     }
   };
 
@@ -80,7 +80,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     try {
       await setAdminCode(newAdminCode.trim());
       await setUserCode(newUserCode.trim());
-      setMessage("✅ Admin and User codes have been reset successfully!");
+      setMessage("✅ Admin and Preceptor codes have been reset successfully!");
       setRecoveryVerified(false);
       setShowRecoveryPrompt(false);
       setRecoveryInput("");
@@ -111,7 +111,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
               onChange={(e) => setUserInput(e.target.value)}
             />
             <button onClick={handleUserLogin} className="access-btn user">
-              Enter as User
+              Enter as Preceptor
             </button>
           </div>
         )}

@@ -34,7 +34,7 @@ interface Conversation {
 }
 
 export default function App() {
-  const [role, setRole] = useState<"user" | "admin" | null>(null);
+  const [role, setRole] = useState<"preceptor" | "admin" | null>(null);
   const [currentPage, setCurrentPage] = useState<"main" | "admin">("main");
 
   const [progressOpen, setProgressOpen] = useState(false);
@@ -57,7 +57,7 @@ export default function App() {
     (async () => {
       await initializeDefaultCodes();
       const savedRole = sessionStorage.getItem(SESSION_KEY);
-      if (savedRole === "user" || savedRole === "admin") setRole(savedRole);
+      if (savedRole === "preceptor" || savedRole === "admin") setRole(savedRole);
     })();
   }, []);
 
