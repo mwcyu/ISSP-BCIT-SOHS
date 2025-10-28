@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { HelpCircle, X } from 'lucide-react';
 
 interface PromptHelperButtonProps {
@@ -74,6 +74,17 @@ const standardTitles = {
 export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [isSmall, setIsSmall] = useState(window.innerWidth < 400);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+      setIsSmall(window.innerWidth < 400);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (!currentStandard || currentStandard < 1 || currentStandard > 4) {
     return null;
@@ -84,103 +95,117 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
   const showPopover = isOpen || isHovered;
 
   return (
-    // ✅ Force position with inline styles
     <div 
       style={{
         position: 'fixed',
-        bottom: '5.8rem',
-        right: '0.7rem',
+        bottom: isMobile ? "4.3rem" : "5.7rem",
+        right: isMobile ? "0.5rem" : "0.7rem",
         zIndex: 50,
         pointerEvents: 'auto',
       }}
     >
-      {/* Popover: wider and centered */}
+      {/* Popover */}
       {showPopover && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '100%',
-            right: 0,
-            transform: 'translateX(0%)',
-            marginBottom: '12px',
-            width: '95vw',
-            maxWidth: '420px',
-            maxHeight: '500px',
-            backgroundColor: 'white',
-            borderRadius: '0.5rem',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            border: '1px solid #e5e7eb',
-            overflow: 'hidden',
-          }}
-        >
-          <div style={{
-            backgroundColor: '#003E6B',
-            color: 'white',
-            padding: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <HelpCircle size={20} />
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500' }}>Prompt Questions</h3>
-            </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{
-                padding: '0.25rem',
-                borderRadius: '0.25rem',
-                transition: 'background-color 0.2s',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <X size={16} />
-            </button>
-          </div>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '100%',
+          right: 0,
+          transform: 'translateX(0%)',
+          marginBottom: '12px',
+          width: '95vw',        // almost full width for mobile
+          maxWidth: '420px',
+          maxHeight: '70vh',  
+          backgroundColor: 'white',
+          borderRadius: '0.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          border: '1px solid #e5e7eb',
+          overflow: 'hidden',
 
-          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            <div style={{ padding: '1rem' }}>
-              <h4 style={{
-                color: '#003E6B',
-                marginBottom: '0.75rem',
-                fontSize: '0.875rem',
-                fontWeight: '500'
-              }}>
-                {title}
-              </h4>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {prompts.map((prompt, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      fontSize: '0.875rem',
-                      color: '#374151',
-                      paddingLeft: '0.75rem',
-                      borderLeft: '2px solid #d1d5db',
-                      paddingTop: '0.25rem',
-                      paddingBottom: '0.25rem',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderLeftColor = '#ffd700';
-                      e.currentTarget.style.backgroundColor = '#f9fafb';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderLeftColor = '#d1d5db';
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                  >
-                    {prompt}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          // Responsive adjustments using a simple window width check
+          ...(window.innerWidth < 640 && {  // small screens
+            width: '90vw',
+            maxHeight: '40vh',             // shorter height on mobile
+          }),
+          ...(window.innerWidth < 400 && {  // very small screens
+            width: '85vw',
+            maxHeight: '35vh',
+          }),
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          backgroundColor: '#003E6B',
+          color: 'white',
+          padding: '0.75rem 1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <HelpCircle size={20} />
+            <h3 style={{ fontSize: '0.875rem', fontWeight: 500 }}>Prompt Questions</h3>
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              padding: '0.25rem',
+              borderRadius: '0.25rem',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div style={{ maxHeight: 'calc(50vh - 3rem)', overflowY: 'auto', ...(window.innerWidth < 640 && { maxHeight: 'calc(40vh - 3rem)' }), ...(window.innerWidth < 400 && { maxHeight: 'calc(35vh - 3rem)' }) }}>
+          <div style={{ padding: '1rem' }}>
+            <h4 style={{
+              color: '#003E6B',
+              marginBottom: '0.75rem',
+              fontSize: '0.875rem',
+              fontWeight: 500
+            }}>
+              {title}
+            </h4>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {prompts.map((prompt, index) => (
+                <li
+                  key={index}
+                  style={{
+                    fontSize: '0.875rem',
+                    color: '#374151',
+                    paddingLeft: '0.75rem',
+                    borderLeft: '2px solid #d1d5db',
+                    paddingTop: '0.25rem',
+                    paddingBottom: '0.25rem',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderLeftColor = '#ffd700';
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderLeftColor = '#d1d5db';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  {prompt}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      {/* Button */}
+
+
+      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsHovered(true)}

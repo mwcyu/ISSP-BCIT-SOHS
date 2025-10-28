@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu, Settings } from 'lucide-react';
-import bcitLogo from '../assets/bcit-logo.png'; // ✅ use local image instead of figma:asset
+import bcitLogo from '../assets/bcit-logo.png'; //
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -41,12 +41,7 @@ export function Header({ onMenuClick, onProgressClick, onSettingsClick }: Header
         >
           Progress
         </button>
-        <button
-          onClick={onSettingsClick}
-          className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-        >
-          <Settings className="w-6 h-6" />
-        </button>
+
       </div>
     </header>
   );

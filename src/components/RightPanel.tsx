@@ -85,7 +85,9 @@ export function RightPanel({
               <Menu className="w-5 h-5 text-gray-700" />
             </button>
           )}
-
+          
+          {/* Not needed (the hamburger) */}
+{/* 
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
@@ -93,7 +95,7 @@ export function RightPanel({
               title="Toggle Sidebar">
               <Menu className="w-5 h-5 text-gray-700" />
             </button>
-          )}
+          )} */} 
 
           <div className="flex -space-x-2">
             <div className="w-8 h-8 rounded-full bg-[#003E6B] border-2 border-white flex items-center justify-center">
@@ -103,10 +105,6 @@ export function RightPanel({
           <span className="ml-2 text-gray-700">Feedback Helper</span>
         </div>
 
-        {/* Title */}
-        <span className="text-lg font-semibold text-gray-800">
-          Feedback Helper
-        </span>
       </div>
 
       {/* Chat Messages */}
