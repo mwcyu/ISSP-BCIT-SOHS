@@ -1,11 +1,14 @@
 import { getSessionId } from "../utils/session";
 
+import { db } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+
 export async function sendMessageToAI(
   promptType: "standard1" | "standard2" | "standard3" | "standard4" | "freechat",
   userMessage?: string
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
-  const webhookUrl = "https://ricejoj198.app.n8n.cloud/webhook/e27c918a-091a-4f8e-8052-298205d7d997";
+  const webhookUrl = "https://jecen38796.app.n8n.cloud/webhook/e27c918a-091a-4f8e-8052-298205d7d997";
   const sessionId = getSessionId();
   const chatInput = userMessage
   const res = await fetch(webhookUrl, {
@@ -25,5 +28,29 @@ export async function sendMessageToAI(
 
   console.log("n8n response:", data);
 
-  return data.output ?? "✅ Message sent to n8n workflow!";
+  if (data.update === true) {
+    try {
+      const sessionRef = doc(db, "session_feedback", sessionId);
+      const sessionSnap = await getDoc(sessionRef);
+
+      if (sessionSnap.exists()) {
+        const latestSessionData = sessionSnap.data();
+        console.log("💾 Session data fetched and stored:", latestSessionData);
+      } else {
+        console.log("⚠️ No session found in Firestore for this sessionId");
+        const latestSessionData = null;
+      }
+    } catch (err) {
+      console.error("❌ Error fetching session from Firestore:", err);
+      const latestSessionData = null;
+    }
+  }
+
+  const reply = data.output ?? "✅ Message sent to n8n workflow!";
+
+
+  return reply;
+  
 }
+
+
