@@ -21,28 +21,7 @@ export default function LiveSessionDocumentPreview() {
   return (
     <>
       {/* Floating button */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "180px",
-          zIndex: 999999,
-        }}>
-        <button
-          onClick={() => setOpen(true)}
-          style={{
-            backgroundColor: "#111827",
-            color: "white",
-            padding: "12px 20px",
-            borderRadius: "8px",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "14px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-          }}>
-          Document Preview
-        </button>
-      </div>
+      
 
       {/* Modal */}
       {open && (
