@@ -21,7 +21,6 @@ export default function LiveSessionDocumentPreview() {
   return (
     <>
       {/* Floating button */}
-      
 
       {/* Modal */}
       {open && (

@@ -6,11 +6,9 @@ import "./index.css";
 
 import LiveSessionDocumentPreview from "./components/LiveSessionDocumentPreview";
 
-
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
     <LiveSessionDocumentPreview />
-
   </React.StrictMode>
 );
