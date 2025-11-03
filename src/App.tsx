@@ -263,7 +263,9 @@ export default function App() {
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
   
-      <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-w-0">
+      {/* 👇 Add this wrapper with responsive text scaling */}
+      <div className="h-full overflow-hidden sm:text-base text-sm">
         <RightPanel
           messages={getCurrentMessages()}
           inputValue={inputValue}
@@ -280,6 +282,8 @@ export default function App() {
           onToggleSidebar={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
         />
       </div>
+    </div>
+
 
       {/* ====== Modals ====== */}
       <ProgressModal
