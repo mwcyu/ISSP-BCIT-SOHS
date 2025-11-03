@@ -10,7 +10,7 @@ interface DocumentPreviewModalProps {
 
 /**
  * DocumentPreviewModal
- * Integrates the live Firestore document preview + PDF export
+ * Integrates the live Supabase session summary preview + PDF export
  * inside your styled modal component.
  */
 export function DocumentPreviewModal({
@@ -19,10 +19,12 @@ export function DocumentPreviewModal({
 }: DocumentPreviewModalProps) {
   const { summary, loading } = useSessionSummary();
 
+  // Format timestamp from Supabase (created_at)
   const formatted = useMemo(() => {
     if (!summary) return null;
-    const ts =
-      summary.timestamp?.toDate?.().toLocaleString?.() ?? "No timestamp";
+    const ts = summary.created_at
+      ? new Date(summary.created_at).toLocaleString()
+      : "No timestamp";
     return { ...summary, timestampText: ts };
   }, [summary]);
 
@@ -45,12 +47,14 @@ export function DocumentPreviewModal({
               {/* Download PDF button */}
               <button
                 onClick={() => summary && exportSessionSummaryToPdf(summary)}
-                className="px-4 py-2 bg-[#003E6B] text-white text-sm rounded-lg hover:bg-[#004c8a] transition-colors">
+                className="px-4 py-2 bg-[#003E6B] text-white text-sm rounded-lg hover:bg-[#004c8a] transition-colors"
+              >
                 Download PDF
               </button>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
                 <X className="w-6 h-6 text-gray-600" />
               </button>
             </div>
@@ -68,7 +72,7 @@ export function DocumentPreviewModal({
               <div className="h-full flex items-center justify-center text-gray-400">
                 <p>
                   No summary yet. Once the AI (or test button) writes to
-                  Firestore, the document preview will appear here.
+                  Supabase, the document preview will appear here.
                 </p>
               </div>
             )}
@@ -84,19 +88,24 @@ export function DocumentPreviewModal({
                   </h3>
                 </div>
 
+                {/* Standards Display */}
                 <div className="space-y-4">
-                  {["Standard 1", "Standard 2", "Standard 3", "Standard 4"].map(
-                    (std, i) =>
-                      summary[std as keyof typeof summary] && (
-                        <div key={i} className="border-t pt-3">
-                          <h4 className="font-semibold text-gray-800 mb-1">
-                            {std}
-                          </h4>
-                          <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                            {summary[std as keyof typeof summary] as string}
-                          </p>
-                        </div>
-                      )
+                  {[
+                    { label: "Standard 1", key: "s1_summary" },
+                    { label: "Standard 2", key: "s2_summary" },
+                    { label: "Standard 3", key: "s3_summary" },
+                    { label: "Standard 4", key: "s4_summary" },
+                  ].map(({ label, key }) =>
+                    summary[key as keyof typeof summary] ? (
+                      <div key={key} className="border-t pt-3">
+                        <h4 className="font-semibold text-gray-800 mb-1">
+                          {label}
+                        </h4>
+                        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                          {summary[key as keyof typeof summary] as string}
+                        </p>
+                      </div>
+                    ) : null
                   )}
                 </div>
               </div>

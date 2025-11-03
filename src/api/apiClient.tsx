@@ -3,6 +3,8 @@ import { getSessionId } from "../utils/session";
 import { db } from "./firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
+import { supabase } from "./supabase";
+
 export async function sendMessageToAI(
   promptType:
     | "standard1"
@@ -33,25 +35,42 @@ export async function sendMessageToAI(
 
   console.log("n8n response:", data);
 
-  if (!data.update === true) {
-    try {
-      const sessionRef = doc(db, "session_feedback", "test_session_id");
-      const sessionSnap = await getDoc(sessionRef);
+  // if (!data.update === true) {
+  //   try {
+  //     const sessionRef = doc(db, "session_feedback", "test_session_id");
+  //     const sessionSnap = await getDoc(sessionRef);
 
-      if (sessionSnap.exists()) {
-        const latestSessionData = sessionSnap.data();
-        console.log("💾 Session data fetched and stored:", latestSessionData);
-      } else {
-        console.log("⚠️ No session found in Firestore for this sessionId");
-        const latestSessionData = null;
-      }
-    } catch (err) {
-      console.error("❌ Error fetching session from Firestore:", err);
-      const latestSessionData = null;
-    }
-  }
+  //     if (sessionSnap.exists()) {
+  //       const latestSessionData = sessionSnap.data();
+  //       console.log("💾 Session data fetched and stored:", latestSessionData);
+  //     } else {
+  //       console.log("⚠️ No session found in Firestore for this sessionId");
+  //       const latestSessionData = null;
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Error fetching session from Firestore:", err);
+  //     const latestSessionData = null;
+  //   }
+  // }
 
   const reply = data.output ?? "✅ Message sent to n8n workflow!";
 
   return reply;
 }
+
+async function testSupabase() {
+  const { data, error } = await supabase
+      .from("session_store")
+      .select("*")
+      .eq("sessionId", 'testing31')
+      .single();
+
+
+  if (error) {
+    console.error("❌ Supabase error:", error);
+  } else {
+    console.log("✅ Connected to Supabase! Sample data:", data);
+  }
+}
+
+testSupabase();

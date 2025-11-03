@@ -1,5 +1,5 @@
 // src/types/summary.ts
-import type { Timestamp } from "firebase/firestore";
+// import type { Timestamp } from "firebase/firestore";
 
 /**
  * Represents one user's (one browser tab's) summary document in Firestore.
@@ -7,9 +7,9 @@ import type { Timestamp } from "firebase/firestore";
  */
 export interface SessionSummary {
   sessionId: string;
-  timestamp?: Timestamp;
-  "Standard 1"?: string;
-  "Standard 2"?: string;
-  "Standard 3"?: string;
-  "Standard 4"?: string;
+  created_at?: string;
+  s1_summary?: string;
+  s2_summary?: string;
+  s3_summary?: string;
+  s4_summary?: string;
 }
