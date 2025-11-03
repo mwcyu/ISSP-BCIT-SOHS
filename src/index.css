@@ -1797,7 +1797,7 @@ html {
 
 /* Collapsed state */
 .sidebar-container.collapsed {
-  width: 2.5rem; /* 12 = 3rem for mobile */
+  width: 3rem; /* 12 = 3rem for mobile */
 }
 
 @media (min-width: 640px) { /* sm breakpoint */
