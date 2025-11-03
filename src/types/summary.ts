@@ -5,6 +5,7 @@
  * Represents one user's (one browser tab's) summary document in Firestore.
  * Each session gets its own document with up to four standards.
  */
+// src/types/summary.ts
 export interface SessionSummary {
   sessionId: string;
   created_at?: string;
@@ -13,3 +14,4 @@ export interface SessionSummary {
   s3_summary?: string;
   s4_summary?: string;
 }
+
