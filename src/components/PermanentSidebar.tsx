@@ -78,59 +78,154 @@ export function PermanentSidebar({
   </div>
 
   {/* Menu Section */}
-  <div className="menu-section flex-1 overflow-y-auto">
-    <div className="p-4">
-      {!isCollapsed && <p className="text-xs text-gray-400 mb-3 px-2">MENU</p>}
+  <div className="flex-1 overflow-y-auto">
+        <div className="p-4">
+          {!isCollapsed && <p className="text-xs text-gray-400 mb-3 px-2">MENU</p>}
+          <div className="space-y-1">
+            {/* Home */}
+            <a href="/" onClick={onHomeClick}>
+              <button
+                className={`w-full flex items-center ${
+                  isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+                } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+                title={isCollapsed ? "Home" : ""}
+              >
+                <Home
+                  className="transition-none flex-shrink-0"
+                  style={{
+                    width: isCollapsed ? "18px" : "16px",
+                    height: isCollapsed ? "18px" : "16px",
+                  }}
+                />
+                {!isCollapsed && <span>Home</span>}
+              </button>
+            </a>
 
-      <div className="space-y-1">
-        <button className="sidebar-button home-button" onClick={onHomeClick} title="Home">
-          <Home className="icon" />
-          <span className="label">Home</span>
+      {/* Progress */}
+      <button
+        onClick={onProgressClick}
+        className={`w-full flex items-center ${
+          isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+        } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+        title={isCollapsed ? "Progress" : ""}
+      >
+        <BarChart3
+          className="transition-none flex-shrink-0"
+          style={{
+            width: isCollapsed ? "18px" : "16px",
+            height: isCollapsed ? "18px" : "16px",
+          }}
+        />
+        {!isCollapsed && <span>Progress</span>}
+      </button>
+
+
+            {/* Document Preview */}
+            <button
+              onClick={onDocumentPreviewClick}
+              className={`w-full flex items-center ${
+                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+              title={isCollapsed ? "Document Preview" : ""}
+            >
+              <Eye
+                className="transition-none flex-shrink-0"
+                style={{
+                  width: isCollapsed ? "18px" : "16px",
+                  height: isCollapsed ? "18px" : "16px",
+                }}
+              />
+              {!isCollapsed && <span>Document Preview</span>}
+            </button>
+
+            {/* Admin Button (only visible if role === "admin") */}
+            {role === "admin" && (
+              <button
+                onClick={onAdminClick}
+                className={`w-full flex items-center ${
+                  isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+                } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+                title={isCollapsed ? "Admin Panel" : ""}
+              >
+                <UserCog
+                  className="transition-none flex-shrink-0"
+                  style={{
+                    width: isCollapsed ? "18px" : "16px",
+                    height: isCollapsed ? "18px" : "16px",
+                  }}
+                />
+                {!isCollapsed && <span>Admin Panel</span>}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Support Section */}
+        <div className="p-4 border-t border-gray-700">
+          {!isCollapsed && (
+            <p className="text-xs text-gray-400 mb-3 px-2">SUPPORT</p>
+          )}
+          <div className="space-y-1">
+
+            {/* Privacy Policy */}
+            <button
+              onClick={onPrivacyPolicyClick}
+              className={`w-full flex items-center ${
+                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+              title={isCollapsed ? "Privacy Policy" : ""}
+            >
+              <Shield
+                className="transition-none flex-shrink-0"
+                style={{
+                  width: isCollapsed ? "18px" : "16px",
+                  height: isCollapsed ? "18px" : "16px",
+                }}
+              />
+              {!isCollapsed && <span>Privacy Policy</span>}
+            </button>
+
+            {/* FAQ */}
+            <button
+              onClick={onFAQClick}
+              className={`w-full flex items-center ${
+                isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+              } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+              title={isCollapsed ? "FAQ" : ""}
+            >
+              <FileQuestion
+                className="transition-none flex-shrink-0"
+                style={{
+                  width: isCollapsed ? "18px" : "16px",
+                  height: isCollapsed ? "18px" : "16px",
+                }}
+              />
+              {!isCollapsed && <span>FAQ</span>}
+            </button>
+
+            
+          </div>
+        </div>
+      </div>
+
+      {/* ✅ Logout Section (always visible at bottom) */}
+      <div className="p-4 border-t border-gray-700">
+        <button
+          onClick={onLogoutClick}
+          className={`w-full flex items-center ${
+            isCollapsed ? "justify-center py-2.5" : "gap-3 py-2.5"
+          } px-3 rounded-lg text-gray-300 hover:bg-[#002a4d] transition-colors`}
+          title={isCollapsed ? "Logout" : ""}>
+          <LogOut
+            className="transition-none flex-shrink-0"
+            style={{
+              width: isCollapsed ? "18px" : "16px",
+              height: isCollapsed ? "18px" : "16px",
+            }}
+          />
+          {!isCollapsed && <span>Logout</span>}
         </button>
-
-        <button className="sidebar-button progress-button" onClick={onProgressClick} title="Progress">
-          <BarChart3 className="icon" />
-          <span className="label">Progress</span>
-        </button>
-
-        <button className="sidebar-button document-button" onClick={onDocumentPreviewClick} title="Document Preview">
-          <Eye className="icon" />
-          <span className="label">Document Preview</span>
-        </button>
-
-        {role === "admin" && (
-          <button className="sidebar-button admin-button" onClick={onAdminClick} title="Admin Panel">
-            <UserCog className="icon" />
-            <span className="label">Admin Panel</span>
-          </button>
-        )}
       </div>
     </div>
-
-    {/* Support Section */}
-    <div className="p-4 border-t border-gray-700">
-      {!isCollapsed && <p className="text-xs text-gray-400 mb-3 px-2">SUPPORT</p>}
-      <div className="space-y-1">
-        <button className="sidebar-button privacy-button" onClick={onPrivacyPolicyClick} title="Privacy Policy">
-          <Shield className="icon" />
-          <span className="label">Privacy Policy</span>
-        </button>
-        <button className="sidebar-button faq-button" onClick={onFAQClick} title="FAQ">
-          <FileQuestion className="icon" />
-          <span className="label">FAQ</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  {/* Logout */}
-  <div className="p-4 border-t border-gray-700">
-    <button className="sidebar-button logout-button" onClick={onLogoutClick} title="Logout">
-      <LogOut className="icon" />
-      <span className="label">Logout</span>
-    </button>
-  </div>
-</div>
-
   );
 }
