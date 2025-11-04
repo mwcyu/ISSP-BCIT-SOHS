@@ -22,7 +22,7 @@ export async function sendMessageToAI(
   const res = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, promptType, chatInput }),
+    body: JSON.stringify({ sessionId, chatInput }),
   });
 
   if (!res.ok) {
@@ -60,11 +60,10 @@ export async function sendMessageToAI(
 
 async function testSupabase() {
   const { data, error } = await supabase
-      .from("session_store")
-      .select("*")
-      .eq("sessionId", 'testing31')
-      .single();
-
+    .from("session_store")
+    .select("*")
+    .eq("sessionId", "testing31")
+    .single();
 
   if (error) {
     console.error("❌ Supabase error:", error);

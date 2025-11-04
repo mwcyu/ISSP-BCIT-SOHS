@@ -80,22 +80,12 @@ export function RightPanel({
           {showMobileControls && (
             <button
               onClick={onMobileMenuClick}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              className="p-2 rounded-lg transition-colors lg:hidden"
               title="Menu">
-              <Menu className="w-5 h-5 text-gray-700" />
+              <Menu className="w-5 h-5 text-white" />
             </button>
           )}
           
-          {/* Not needed (the hamburger) */}
-{/* 
-          {onToggleSidebar && (
-            <button
-              onClick={onToggleSidebar}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors hidden lg:flex"
-              title="Toggle Sidebar">
-              <Menu className="w-5 h-5 text-gray-700" />
-            </button>
-          )} */} 
 
           <div className="flex -space-x-2">
             <div className="w-8 h-8 rounded-full bg-[#003E6B] border-2 border-white flex items-center justify-center">

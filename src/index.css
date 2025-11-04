@@ -1782,3 +1782,81 @@ html {
   inherits: false;
   initial-value: "";
 }
+
+
+
+/* sidebar.css */
+.sidebar-container {
+  transition: width 0.3s;
+}
+
+/* Expanded state */
+.sidebar-container.expanded {
+  width: 16rem; /* 64 = 16rem */
+}
+
+/* Collapsed state */
+.sidebar-container.collapsed {
+  width: 3rem; /* 12 = 3rem for mobile */
+}
+
+@media (min-width: 640px) { /* sm breakpoint */
+  .sidebar-container.collapsed {
+    width: 4rem; /* 16 = 4rem for desktop */
+  }
+}
+
+/* Toggle button adjustment on collapsed */
+.sidebar-container .toggle-button {
+  transition: all 0.3s;
+  right: 0.95rem; /* move arrow slightly inside */
+  z-index: 10;
+}
+
+/* Menu buttons when collapsed */
+.sidebar-container.collapsed .menu-button span {
+  display: none; /* hide text labels */
+}
+
+.sidebar-container.collapsed .menu-button svg {
+  margin: 0 auto; /* center icons */
+}
+
+/* Profile section adjustments when collapsed */
+.sidebar-container.collapsed .profile-section {
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar-container.collapsed .profile-section img {
+  width: 1.5rem; /* smaller logo */
+  height: 1.5rem;
+}
+
+/* Logout button adjustments */
+.sidebar-container.collapsed .logout-button span {
+  display: none;
+}
+
+.sidebar-container.collapsed .logout-button svg {
+  margin: 0 auto;
+}
+
+.sidebar-toggle-btn {
+  position: fixed;          /* stays visible when scrolling */
+  top: 20px;                /* adjust vertically */
+  left: 15px;               /* adjust horizontally */
+  z-index: 50;
+  padding: 6px;
+  border-radius: 9999px;    /* fully rounded */
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #111;
+  transform: scale(1.05);
+}
