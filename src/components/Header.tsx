@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu, Settings } from 'lucide-react';
-import bcitLogo from 'figma:asset/744c03421a9eaa843583795ef6c57598224ff63e.png';
+import bcitLogo from '../assets/bcit-logo.png'; //
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -19,19 +19,20 @@ export function Header({ onMenuClick, onProgressClick, onSettingsClick }: Header
         >
           <Menu className="w-6 h-6" />
         </button>
-        
+
         <div className="flex items-center gap-3">
-          <div className="bg-[#ffd700] p-1 rounded">
-            <img 
+          {/* ✅ Circle container for logo */}
+          <div className="bg-[#ffd700] p-1 rounded-full flex items-center justify-center w-10 h-10 overflow-hidden">
+            <img
               src={bcitLogo}
               alt="BCIT Logo"
-              className="h-10 w-auto"
+              className="w-8 h-8 object-cover rounded-full"
             />
           </div>
           <h1 className="text-xl text-[#ffd700] font-bold">Feedback Helper</h1>
         </div>
       </div>
-      
+
       {/* Right side */}
       <div className="ml-auto flex items-center gap-4">
         <button
@@ -40,12 +41,7 @@ export function Header({ onMenuClick, onProgressClick, onSettingsClick }: Header
         >
           Progress
         </button>
-        <button 
-          onClick={onSettingsClick}
-          className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-        >
-          <Settings className="w-6 h-6" />
-        </button>
+
       </div>
     </header>
   );

@@ -6,6 +6,8 @@ import { GuidelinesModal } from "./components/GuidelinesModal";
 import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import { SettingsModal } from "./components/SettingsModal";
 import { DocumentPreviewModal } from "./components/DocumentPreviewModal";
+import { PromptHelperButton } from "./components/PromptHelperButton";
+import { FAQModal } from "./components/FAQModal";
 import AccessPage from "./components/access/AccessPage";
 import AdminPage from "./components/admin/AdminPage";
 
@@ -32,7 +34,7 @@ interface Conversation {
 }
 
 export default function App() {
-  const [role, setRole] = useState<"user" | "admin" | null>(null);
+  const [role, setRole] = useState<"preceptor" | "admin" | null>(null);
   const [currentPage, setCurrentPage] = useState<"main" | "admin">("main");
 
   const [progressOpen, setProgressOpen] = useState(false);
@@ -40,50 +42,45 @@ export default function App() {
   const [privacyPolicyOpen, setPrivacyPolicyOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [documentPreviewOpen, setDocumentPreviewOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState(false);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<
-    string | null
-  >(null);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(false);
+  const [leftSidebarCollapsed, setLeftSidebarCollapsed] = useState(true); // start collapsed on mobile
 
   // ✅ Initialize secure storage & restore saved role
   useEffect(() => {
     (async () => {
       await initializeDefaultCodes();
       const savedRole = sessionStorage.getItem(SESSION_KEY);
-      if (savedRole === "user" || savedRole === "admin") setRole(savedRole);
+      if (savedRole === "preceptor" || savedRole === "admin") setRole(savedRole);
     })();
   }, []);
 
-  // ✅ Handle logout
+  // ✅ Logout
   const handleLogout = () => {
-    sessionStorage.removeItem("care8_active_role"); // remove login session
+    sessionStorage.removeItem(SESSION_KEY);
     setRole(null);
     setCurrentPage("main");
-    setConversations([]); // 🔥 clear all chat history
+    setConversations([]);
     setActiveConversationId(null);
     setInputValue("");
   };
 
-  // ====== Utility Functions ======
-  const getActiveConversation = () =>
-    conversations.find((c) => c.id === activeConversationId);
+  // ====== Conversation Helpers ======
+  const getActiveConversation = () => conversations.find((c) => c.id === activeConversationId);
   const getCurrentMessages = () => getActiveConversation()?.messages || [];
 
-  const createNewConversation = (title?: string) => {
+  const createNewConversation = (title?: string, standard: number | null = null) => {
     const newId = Date.now().toString();
     const newConv: Conversation = {
       id: newId,
       title: title ? title.substring(0, 30) + "..." : "New Conversation",
       preview: title || "Start a conversation...",
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       messages: [],
-      currentStandard: null,
+      currentStandard: standard,
     };
     setConversations((prev) => [newConv, ...prev]);
     setActiveConversationId(newId);
@@ -104,10 +101,7 @@ export default function App() {
               ...c,
               messages: [...c.messages, msg],
               preview: text,
-              timestamp: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             }
           : c
       )
@@ -128,10 +122,7 @@ export default function App() {
               ...c,
               messages: [...c.messages, msg],
               preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
-              timestamp: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              }),
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             }
           : c
       )
@@ -153,45 +144,30 @@ export default function App() {
           ...c,
           messages: msgs,
           preview: text.substring(0, 50) + (text.length > 50 ? "..." : ""),
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
       })
     );
   };
 
-  // ====== Unified AI message pipeline ======
+  // ====== AI message pipeline ======
   const sendToAI = async (
-    promptType:
-      | "standard1"
-      | "standard2"
-      | "standard3"
-      | "standard4"
-      | "freechat",
+    promptType: "standard1" | "standard2" | "standard3" | "standard4" | "freechat",
     userMessage?: string
   ) => {
     let convId = activeConversationId;
     if (!convId) convId = createNewConversation(userMessage || promptType);
-
     if (userMessage && userMessage.trim()) addUserMessage(convId, userMessage);
-
-    // temporary “thinking…” message
     addBotMessage(convId, "🤔 Thinking...");
 
     try {
       const reply = await sendMessageToAI(promptType, userMessage);
       replaceLastBotMessage(convId, reply);
     } catch (err: any) {
-      replaceLastBotMessage(
-        convId,
-        `❌ Error: ${err?.message || "Failed to reach AI."}`
-      );
+      replaceLastBotMessage(convId, `❌ Error: ${err?.message || "Failed to reach AI."}`);
     }
   };
 
-  // ====== Handle message send ======
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     const text = inputValue;
@@ -199,18 +175,32 @@ export default function App() {
     sendToAI("freechat", text);
   };
 
-  // ====== Handle standard buttons ======
   const handleStandardClick = (promptLabel: string) => {
     const label = (promptLabel || "").toLowerCase();
-    let type: "standard1" | "standard2" | "standard3" | "standard4" =
-      "standard1";
-    if (label.includes("2")) type = "standard2";
-    else if (label.includes("3")) type = "standard3";
-    else if (label.includes("4")) type = "standard4";
+    let type: "standard1" | "standard2" | "standard3" | "standard4" = "standard1";
+    let standardNum = 1;
+    if (label.includes("2")) { type = "standard2"; standardNum = 2; }
+    else if (label.includes("3")) { type = "standard3"; standardNum = 3; }
+    else if (label.includes("4")) { type = "standard4"; standardNum = 4; }
+
+    let convId = activeConversationId;
+    if (!convId) convId = createNewConversation(`Standard ${standardNum}`, standardNum);
+    else {
+      setConversations(prev =>
+        prev.map(c => (c.id === convId ? { ...c, currentStandard: standardNum } : c))
+      );
+    }
+
     sendToAI(type);
   };
 
-  // ====== Login Gate ======
+  // ====== Mobile behavior helper ======
+  const handleSidebarAction = (action: () => void) => {
+    action();
+    if (window.innerWidth < 1024) setLeftSidebarCollapsed(true);
+  };
+
+  // ====== Login & Admin Handling ======
   if (!role) {
     return (
       <AccessPage
@@ -222,7 +212,6 @@ export default function App() {
     );
   }
 
-  // ====== Admin Panel ======
   if (currentPage === "admin" && role === "admin") {
     return <AdminPage onBackClick={() => setCurrentPage("main")} />;
   }
@@ -230,21 +219,24 @@ export default function App() {
   // ====== Main App UI ======
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Sidebar - collapsible & overlay on mobile */}
       <PermanentSidebar
         role={role}
-        onProgressClick={() => setProgressOpen(true)}
-        onGuidelinesClick={() => setGuidelinesOpen(true)}
-        onPrivacyPolicyClick={() => setPrivacyPolicyOpen(true)}
-        onSettingsClick={() => setSettingsOpen(true)}
-        onDocumentPreviewClick={() => setDocumentPreviewOpen(true)}
-        onHomeClick={() => setCurrentPage("main")}
-        onAdminClick={() => setCurrentPage("admin")}
-        onLogoutClick={handleLogout} // ✅ ADDED
+        onProgressClick={() => handleSidebarAction(() => setProgressOpen(true))}
+        onGuidelinesClick={() => handleSidebarAction(() => setGuidelinesOpen(true))}
+        onPrivacyPolicyClick={() => handleSidebarAction(() => setPrivacyPolicyOpen(true))}
+        onSettingsClick={() => handleSidebarAction(() => setSettingsOpen(true))}
+        onDocumentPreviewClick={() => handleSidebarAction(() => setDocumentPreviewOpen(true))}
+        onFAQClick={() => handleSidebarAction(() => setFaqOpen(true))}
+        onHomeClick={() => handleSidebarAction(() => setCurrentPage("main"))}
+        onAdminClick={() => handleSidebarAction(() => setCurrentPage("admin"))}
+        onLogoutClick={() => handleSidebarAction(handleLogout)}
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={() => setLeftSidebarCollapsed(!leftSidebarCollapsed)}
       />
 
-      <div className="flex-1 flex flex-col">
+      {/* Right panel - main chat area */}
+      <div className="flex-1 flex flex-col min-w-0 sm:text-base text-sm">
         <RightPanel
           messages={getCurrentMessages()}
           inputValue={inputValue}
@@ -268,24 +260,15 @@ export default function App() {
         onClose={() => setProgressOpen(false)}
         completedStandards={[]}
         onToggleStandard={() => {}}
-        currentStandard={undefined}
+        currentStandard={getActiveConversation()?.currentStandard ?? undefined}
       />
-      <GuidelinesModal
-        isOpen={guidelinesOpen}
-        onClose={() => setGuidelinesOpen(false)}
-      />
-      <PrivacyPolicyModal
-        isOpen={privacyPolicyOpen}
-        onClose={() => setPrivacyPolicyOpen(false)}
-      />
-      <SettingsModal
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-      />
-      <DocumentPreviewModal
-        isOpen={documentPreviewOpen}
-        onClose={() => setDocumentPreviewOpen(false)}
-      />
+      <GuidelinesModal isOpen={guidelinesOpen} onClose={() => setGuidelinesOpen(false)} />
+      <PrivacyPolicyModal isOpen={privacyPolicyOpen} onClose={() => setPrivacyPolicyOpen(false)} />
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <DocumentPreviewModal isOpen={documentPreviewOpen} onClose={() => setDocumentPreviewOpen(false)} />
+      <FAQModal isOpen={faqOpen} onClose={() => setFaqOpen(false)} />
+
+      <PromptHelperButton currentStandard={getActiveConversation()?.currentStandard ?? 1} />
     </div>
   );
 }

@@ -38,6 +38,7 @@ export function StandardsGrid({ onStandardClick }: StandardsGridProps) {
         >
           <h3 className="text-gray-600 mb-1">{standard.title}</h3>
           <p className="text-gray-500 text-sm">{standard.subtitle}</p>
+          
         </div>
       ))}
     </div>
