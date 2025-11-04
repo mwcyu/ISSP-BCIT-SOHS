@@ -48,8 +48,8 @@ export function PermanentSidebar({
       {/* Toggle button - always visible */}
       <button
   onClick={onToggleCollapse}
-   className="fixed top-6 left-6 z-50 p-1.5 hover:bg-[#000000] bg-black/50 rounded-full transition-colors flex bg-[#002a4d]"
-  title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+  className="sidebar-toggle-btn"
+  title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
 >
   {isCollapsed ? (
     <ChevronRight className="w-5 h-5 text-gray-300" />
@@ -57,6 +57,7 @@ export function PermanentSidebar({
     <ChevronLeft className="w-5 h-5 text-gray-300" />
   )}
 </button>
+
 
       {/* Sidebar - full screen on mobile when expanded, hidden when collapsed */}
       <div

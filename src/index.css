@@ -1841,3 +1841,22 @@ html {
 .sidebar-container.collapsed .logout-button svg {
   margin: 0 auto;
 }
+
+.sidebar-toggle-btn {
+  position: fixed;          /* stays visible when scrolling */
+  top: 20px;                /* adjust vertically */
+  left: 15px;               /* adjust horizontally */
+  z-index: 50;
+  padding: 6px;
+  border-radius: 9999px;    /* fully rounded */
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #111;
+  transform: scale(1.05);
+}

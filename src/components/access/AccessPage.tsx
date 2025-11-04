@@ -1,276 +1,136 @@
 import React, { useState } from "react";
-import { getSessionId } from "../../utils/session";
 import "./AccessPage.css";
-import {
-  verifyAdmin,
-  verifyUser,
-  verifyRecovery,
-  setAdminCode,
-  setUserCode,
-} from "../../utils/accessStorage";
+import bcitLogo from "../../assets/bcit-logo.png";
+
+type View = "login" | "admin-login" | "user" | "admin";
 
 interface AccessPageProps {
-  onLoginSuccess: (role: "preceptor" | "admin") => void;
+  onLoginSuccess: (role: "user" | "admin") => void;
 }
 
 export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
-  const [userInput, setUserInput] = useState("");
-  const [adminInput, setAdminInput] = useState("");
-  const [recoveryInput, setRecoveryInput] = useState("");
-  const [newAdminCode, setNewAdminCode] = useState("");
-  const [newUserCode, setNewUserCode] = useState("");
+  const [view, setView] = useState<View>("login");
+  const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
-  const [showRecoveryPrompt, setShowRecoveryPrompt] = useState(false);
-  const [recoveryVerified, setRecoveryVerified] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false); // 👈 NEW
 
-  const handleUserLogin = async () => {
-    const ok = await verifyUser(userInput);
-    if (ok) {
-      // 🧹 Clear any previous session ID before making a new one
-      sessionStorage.removeItem("chatSessionId");
-
-      // 🆕 Create new session ID
-      const newSessionId = getSessionId();
-      console.log("🆕 New session started:", newSessionId);
-      
-      onLoginSuccess("preceptor");
+  const handleUserLogin = () => {
+    if (code === "user123") {
+      onLoginSuccess("user"); // 👈 redirect to main site
     } else {
-      setMessage("❌ Invalid preceptor code");
+      setMessage("❌ Invalid user code.");
     }
   };
 
-
-  // ✅ Admin login
-  const handleAdminLogin = async () => {
-    const ok = await verifyAdmin(adminInput);
-    if (ok) {
-      // 🧹 Clear any previous session ID before making a new one
-      sessionStorage.removeItem("chatSessionId");
-
-      // 🆕 Create new session ID
-      const newSessionId = getSessionId();
-      console.log("🆕 New session started:", newSessionId);
-      
-      onLoginSuccess("admin");
+  const handleAdminLogin = () => {
+    if (code === "admin123") {
+      onLoginSuccess("admin"); // 👈 redirect to main site
     } else {
-      setMessage("❌ Invalid admin code");
+      setMessage("❌ Invalid admin code.");
     }
   };
 
-  const handleRecoverySubmit = async () => {
-    const ok = await verifyRecovery(recoveryInput);
-    if (ok) {
-      setMessage(
-        "✅ Recovery code verified. You can now reset the codes below."
-      );
-      setRecoveryVerified(true);
-    } else {
-      setMessage("❌ Invalid recovery code.");
-      setRecoveryVerified(false);
-    }
+  const handleLogout = () => {
+    setView("login");
+    setCode("");
+    setMessage("");
   };
 
-  const handleRecoverySave = async () => {
-    if (!newAdminCode.trim() || !newUserCode.trim()) {
-      setMessage("⚠ Please fill in both new codes.");
-      return;
-    }
-
-    try {
-      await setAdminCode(newAdminCode.trim());
-      await setUserCode(newUserCode.trim());
-      setMessage("✅ Admin and Preceptor codes have been reset successfully!");
-      setRecoveryVerified(false);
-      setShowRecoveryPrompt(false);
-      setRecoveryInput("");
-      setNewAdminCode("");
-      setNewUserCode("");
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Failed to reset codes. Please try again.");
-    }
-  };
-
-  // Reset message when switching views
-  const clearMessage = () => setMessage("");
-
+  // ===== LOGIN / ADMIN LOGIN =====
   return (
-    <div className="access-page">
-      <div className="access-container">
-        <h1 className="access-title">🔐 Access Portal</h1>
+    <div className="bcit-page">
+      <div className="access-card">
+        <div className="logo-section">
+          {/* <img src="../assets/bcit-logo.png" alt="BCIT Logo" className="bcit-logo"/> */}
+          <img src={bcitLogo} alt="BCIT Logo" className="bcit-logo"/>
+          <h2 className="bcit-subtitle">Clinical Feedback Helper</h2>
+        </div>
 
-        {/* === User Login (always visible) === */}
-        {!showRecoveryPrompt && !recoveryVerified && (
-          <div>
-            <label className="access-label">User Access Code</label>
-            <input
-              type="password"
-              className="access-input"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-            />
-            <button onClick={handleUserLogin} className="access-btn user">
-              Enter as Preceptor
-            </button>
-          </div>
-        )}
+        <div className="secure-box fade-area">
+          <h3 className="secure-title">🔒 Secure Access Required</h3>
 
-        {/* === Admin Login Toggle (hidden by default) === */}
-        {/* {!showRecoveryPrompt && !recoveryVerified && (
-          <div className="admin-toggle-section">
-            <button
-              onClick={() => {
-                setShowAdminLogin(!showAdminLogin);
-                clearMessage();
-              }}
-              className="access-btn text-link"
-            >
-              {showAdminLogin ? "▲ Hide Admin Login" : "▼ Show Admin Login"}
-            </button>
+          {view === "login" ? (
+            <>
+              <p className="secure-desc">
+                Enter your universal access code to begin the feedback process.
+              </p>
+              <label className="input-label">ACCESS CODE</label>
+              <input
+                type="password"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="access-input"
+                placeholder="Enter access code"
+              />
 
-            {showAdminLogin && (
-              <div className="admin-login-section">
-                <label className="access-label">Admin Access Code</label>
-                <input
-                  type="password"
-                  className="access-input"
-                  value={adminInput}
-                  onChange={(e) => setAdminInput(e.target.value)}
-                />
-                <button onClick={handleAdminLogin} className="access-btn admin">
-                  Enter as Admin
-                </button>
+              <button onClick={handleUserLogin} className="access-btn main-btn">
+                ACCESS SYSTEM
+              </button>
 
-                <button
-                  onClick={() => setShowRecoveryPrompt(true)}
-                  className="access-btn text-link"
-                >
-                  Forgot Admin Code?
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-        // Inside your return, replace the admin toggle section with this: */}
+              <button
+                onClick={() => {
+                  setView("admin-login");
+                  setCode("");
+                  setMessage("");
+                }}
+                className="access-btn admin-btn"
+              >
+                ADMIN ACCESS
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="secure-desc">Administrator login required.</p>
+              <label className="input-label">ADMIN ACCESS CODE</label>
+              <input
+                type="password"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="access-input"
+                placeholder="Enter admin code"
+              />
 
-        {!showRecoveryPrompt && !recoveryVerified && (
-          <div className="admin-toggle-section">
-            <button
-              onClick={() => {
-                setShowAdminLogin(!showAdminLogin);
-                setMessage("");
-              }}
-              className="access-btn text-link"
-              aria-expanded={showAdminLogin}
-            >
-              {showAdminLogin ? (
-                <>▲ Hide Admin Access</>
-              ) : (
-                <>🔐 Need Admin Access?</>
-              )}
-            </button>
+              <button onClick={handleAdminLogin} className="access-btn main-btn">
+                LOGIN AS ADMIN
+              </button>
 
-            {showAdminLogin && (
-              <div className="admin-login-section">
-                <label className="access-label">Admin Access Code</label>
-                <input
-                  type="password"
-                  className="access-input"
-                  value={adminInput}
-                  onChange={(e) => setAdminInput(e.target.value)}
-                />
-                <button onClick={handleAdminLogin} className="access-btn admin">
-                  Log In as Admin
-                </button>
+              <button
+                onClick={() => {
+                  setView("login");
+                  setCode("");
+                  setMessage("");
+                }}
+                className="access-btn admin-btn"
+              >
+                BACK TO USER ACCESS
+              </button>
+            </>
+          )}
 
-                <button
-                  onClick={() => setShowRecoveryPrompt(true)}
-                  className="access-btn text-link"
-                >
-                  🔑 Forgot Admin Code?
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+          {message && <p className="access-message">{message}</p>}
+        </div>
 
-        {/* === Recovery Flow === */}
-        {showRecoveryPrompt && !recoveryVerified && (
-          <div className="recovery-section">
-            <label className="access-label">Enter Recovery Code</label>
-            <input
-              type="text"
-              className="access-input"
-              value={recoveryInput}
-              onChange={(e) => setRecoveryInput(e.target.value)}
-            />
-            <button
-              onClick={handleRecoverySubmit}
-              className="access-btn recovery"
-            >
-              Verify Recovery Code
-            </button>
-            <button
-              onClick={() => {
-                setShowRecoveryPrompt(false);
-                setRecoveryInput("");
-                setMessage("");
-              }}
-              className="access-btn text-link"
-            >
-              Cancel
-            </button>
-            {message && <p className="access-message">{message}</p>}
-          </div>
-        )}
+        <div className="notice-box">
+          <p>⚠ This system is authorized for use by BCIT preceptors only.</p>
+        </div>
 
-        {recoveryVerified && (
-          <div className="recovery-reset-section">
-            <h3 className="access-subtitle">Reset Access Codes</h3>
+        <div className="about-box">
+          <p className="about-title">About this tool:</p>
+          <ul>
+            <li>Structured feedback based on BCCNM standards</li>
+            <li>AI-powered prompting for detailed examples</li>
+            <li>Automated report generation</li>
+            <li>No personal data stored locally</li>
+          </ul>
+        </div>
 
-            <label className="access-label">New Admin Code</label>
-            <input
-              type="text"
-              className="access-input"
-              value={newAdminCode}
-              onChange={(e) => setNewAdminCode(e.target.value)}
-            />
+        <div className="contact-box">
+          <p>Contact your clinical instructor if you need an access code.</p>
+        </div>
 
-            <label className="access-label">New User Code</label>
-            <input
-              type="text"
-              className="access-input"
-              value={newUserCode}
-              onChange={(e) => setNewUserCode(e.target.value)}
-            />
-
-            <button onClick={handleRecoverySave} className="access-btn save-btn">
-              💾 Save New Codes
-            </button>
-
-            <button
-              onClick={() => {
-                setRecoveryVerified(false);
-                setShowRecoveryPrompt(false);
-                setRecoveryInput("");
-                setNewAdminCode("");
-                setNewUserCode("");
-                setMessage("");
-              }}
-              className="access-btn text-link"
-            >
-              Cancel
-            </button>
-
-            {message && <p className="access-message">{message}</p>}
-          </div>
-        )}
-
-        {/* Global message (only when not in recovery flow) */}
-        {!recoveryVerified && !showRecoveryPrompt && message && (
-          <p className="access-message">{message}</p>
-        )}
+        <footer className="footer">
+          <p>British Columbia Institute of Technology</p>
+          <p>School of Health Sciences – Nursing Program</p>
+        </footer>
       </div>
     </div>
   );
