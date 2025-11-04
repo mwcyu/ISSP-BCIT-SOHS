@@ -1,51 +1,16 @@
 import os
-import glob
-from typing import Dict
-
-from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
 
-# Path configuration
-BASE = os.path.dirname(os.path.abspath(__file__))
-PROJECT = os.path.dirname(BASE)
-DATA_DIR = os.path.join(PROJECT, "data")
-PERSIST_ROOT = os.path.join(PROJECT, "vectorstores")
+VECTOR_DIR = "vectorstores"
+os.makedirs(VECTOR_DIR, exist_ok=True)
 
-# Knowledge base directory mapping
-KNOWLEDGE_DIRS = {
-    "standards": os.path.join(DATA_DIR, "Standards of Practice"),
-    "improvements": os.path.join(DATA_DIR, "Areas of Concern & Strategies for Improvement"),
-}
-
-
-def _ensure_dirs():
-    """Create vectorstore directory if it doesn't exist."""
-    os.makedirs(PERSIST_ROOT, exist_ok=True)
-
-
-def _chunks_from_directory(dir_path: str):
-    """
-    Load and chunk markdown documents from a directory.
-    
-    Uses RecursiveCharacterTextSplitter for semantic chunking:
-    - chunk_size=1200: Larger chunks for better context
-    - chunk_overlap=200: 16% overlap for continuity between chunks
-    
-    Args:
-        dir_path: Path to directory containing markdown files
-        
-    Returns:
-        List of Document objects with chunked content
-    """
-    # Load all markdown files from directory and subdirectories
-    loader = DirectoryLoader(
-        dir_path,
-        glob="**/*.md",
-        loader_cls=UnstructuredMarkdownLoader,
-        show_progress=True
-    )
+def _create_vectorstore(pdf_path, name, embedding):
+    """Build a Chroma store from PDF and persist it."""
+    print(f"Building vectorstore for {name} ...")
+    loader = PyPDFLoader(pdf_path)
     docs = loader.load()
     
     # RecursiveCharacterTextSplitter follows LangChain best practices

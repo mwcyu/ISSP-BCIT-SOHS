@@ -1,0 +1,232 @@
+/* Overall page */
+.bcit-page {
+  background-color: #0a1445;
+  color: #1a1a1a;
+  font-family: "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem; /* a touch more padding for balance */
+}
+
+/* Card container */
+.access-card {
+  background: #ffffff;
+  border-radius: 2rem; /* keep rounded ends */
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 1000px;   /* much wider */
+  min-height: 950px;   /* taller to match width */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* top and bottom content spaced nicely */
+}
+
+
+
+/* Header */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.8rem; /* more breathing room */
+}
+
+.book-icon {
+  font-size: 2.4rem;
+  background: #e6a600;
+  color: #0a1445;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bcit-logo {
+  width: 120px;
+  height: auto;
+  border-radius: 12px;
+  background: #e6a600;
+  padding: 8px;
+  box-shadow: 0 0 0 3px #0a1445;
+  margin-bottom: 0.5rem; /* 👈 lifts the logo away from the subtitle */
+}
+
+.bcit-title {
+  margin: 1rem 0 0.2rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: #0a1445;
+  padding: 0.5rem 1.25rem;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.bcit-subtitle {
+  color: #f5b800;
+  font-size: 1.75rem;     /* 👈 bigger font size */
+  font-weight: 800;       /* bold for emphasis */
+  letter-spacing: 0.5px;  /* subtle spacing for clarity */
+  text-transform: uppercase;
+  margin-top: 2.5rem;     /* more space below logo */
+  text-align: center;
+}
+
+/* Secure box */
+.secure-box {
+  margin-top: 2rem; /* moved down slightly */
+}
+
+.secure-title {
+  color: #003876;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.secure-desc {
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* Input */
+.input-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #003876;
+  text-align: left;
+  margin-bottom: 0.35rem;
+}
+
+.access-input {
+  width: 100%;
+  padding: 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #003876;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+.access-input:focus {
+  outline: none;
+  border-color: #f5b800;
+  box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.25);
+}
+
+/* Buttons */
+.access-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.main-btn {
+  background: linear-gradient(to right, #f5b800, #e6a600);
+  color: #0a1445;
+}
+
+.main-btn:hover {
+  background: linear-gradient(to right, #e6a600, #d19400);
+  transform: translateY(-2px);
+}
+
+.admin-btn {
+  background: none;
+  color: #003876;
+  border: 1px solid #d1d5db;
+}
+
+.admin-btn:hover {
+  background: rgba(245, 184, 0, 0.1);
+}
+
+/* Message */
+.access-message {
+  background: #f0f9ff;
+  color: #003876;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  padding: 0.65rem;
+  border-radius: 8px;
+  border-left: 3px solid #f5b800;
+}
+
+/* Info boxes */
+.notice-box {
+  margin-top: 1.5rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.about-box {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.about-title {
+  font-weight: 700;
+  color: #003876;
+  margin-bottom: 0.4rem;
+}
+
+.about-box ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.contact-box {
+  font-size: 0.9rem;
+  margin-top: 1.75rem;
+  color: #555;
+}
+
+/* Footer */
+.footer {
+  margin-top: 2.25rem;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .access-card {
+    padding: 2rem;
+    max-width: 90%;
+  }
+}
+
+/* Smooth fade animation for swapping views inside the box */
+.fade-area {
+  transition: all 0.4s ease;
+}
+
+.fade-area input,
+.fade-area button,
+.fade-area p,
+.fade-area label {
+  transition: opacity 0.3s ease;
+}
