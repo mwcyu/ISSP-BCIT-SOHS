@@ -37,9 +37,9 @@ We rebuilt the original feedback chatbot into a fully coded solution with a clea
 | [Jorden Shukla](https://github.com/jordenshukla) |
 | [Sandy Lu](https://github.com/divine-panda) |
 | [Spencer Lang](https://github.com/spenlang39) |
-| [Joshua Ma](https://github.com/REPLACE_JOSHUA) |
+| [Joshua Ma](https://github.com/joshuama123) |
 | [Jessica Shokouhi](https://github.com/Jessica-Shokouhi) |
-| [Ramnik Mudaliar](https://github.com/REPLACE_RAMNIK) |
+| [Ramnik Mudaliar](https://github.com/gitromi) |
 | [Philip Dahl](https://github.com/REPLACE_PHILIP) |
 
 ---
