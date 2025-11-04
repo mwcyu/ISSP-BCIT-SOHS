@@ -1,4 +1,3 @@
-node_modules
 # Python
 __pycache__/
 *.py[cod]
@@ -54,7 +53,6 @@ data/
 *.pickle
 chroma_db/
 vectorstore/
-vectorstores/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -103,9 +101,3 @@ Desktop.ini
 .cache/
 
 .langgraph_api/
-.github/
-ISSP/
-ENHANCEMENT_GUIDE.md
-ENHANCEMENTS_SUMMARY.md
-SIMPLIFICATION_SUMMARY.md
-agent-chat-ui/
