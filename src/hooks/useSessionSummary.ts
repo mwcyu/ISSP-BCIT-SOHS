@@ -16,7 +16,7 @@ export function useSessionSummary() {
   const [summary, setSummary] = useState<SessionSummary | null>(null);
   const [loading, setLoading] = useState(true);
   // const sessionId = useMemo(() => getSessionId(), []);
-  const sessionId = "testing31"
+  const sessionId = getSessionId()
 
 useEffect(() => {
     let subscription: any;

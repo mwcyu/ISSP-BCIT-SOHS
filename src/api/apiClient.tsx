@@ -60,11 +60,10 @@ export async function sendMessageToAI(
 
 async function testSupabase() {
   const { data, error } = await supabase
-      .from("session_store")
-      .select("*")
-      .eq("sessionId", 'testing31')
-      .single();
-
+    .from("session_store")
+    .select("*")
+    .eq("sessionId", "testing31")
+    .single();
 
   if (error) {
     console.error("❌ Supabase error:", error);
