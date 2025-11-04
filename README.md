@@ -40,19 +40,5 @@ We rebuilt the original feedback chatbot into a fully coded solution with a clea
 | [Joshua Ma](https://github.com/joshuama123) |
 | [Jessica Shokouhi](https://github.com/Jessica-Shokouhi) |
 | [Ramnik Mudaliar](https://github.com/gitromi) |
-| [Philip Dahl](https://github.com/REPLACE_PHILIP) |
+| [Philip Dahl](https://github.com/PhilipDahl) |
 
----
-
-## 🚀 Getting Started (Development)
-
-```bash
-# Clone the repository
-git clone <repo-url>
-cd care8-ai
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
