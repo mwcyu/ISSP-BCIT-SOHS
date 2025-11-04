@@ -33,16 +33,14 @@ We rebuilt the original feedback chatbot into a fully coded solution with a clea
 
 | Member |
 |--------|
-| [Marco Yu](https://github.com/REPLACE_MARCO) |
-| [Jorden Shukla](https://github.com/REPLACE_JORDEN) |
-| [Sandy Lu](https://github.com/REPLACE_SANDY) |
-| [Spencer Lang](https://github.com/REPLACE_SPENCER) |
+| [Marco Yu](https://github.com/mwcyu) |
+| [Jorden Shukla](https://github.com/jordenshukla) |
+| [Sandy Lu](https://github.com/divine-panda) |
+| [Spencer Lang](https://github.com/spenlang39) |
 | [Joshua Ma](https://github.com/REPLACE_JOSHUA) |
-| [Jessica Shokouhi](https://github.com/REPLACE_JESSICA) |
+| [Jessica Shokouhi](https://github.com/Jessica-Shokouhi) |
 | [Ramnik Mudaliar](https://github.com/REPLACE_RAMNIK) |
 | [Philip Dahl](https://github.com/REPLACE_PHILIP) |
-
-*(Replace the usernames above with actual GitHub profile URLs.)*
 
 ---
 
