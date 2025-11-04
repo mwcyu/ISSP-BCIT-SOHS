@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ISSP",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
