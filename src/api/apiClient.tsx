@@ -11,14 +11,14 @@ export async function sendMessageToAI(
     | "standard2"
     | "standard3"
     | "standard4"
-    | "freechat",
-  userMessage?: string
+    | "hi",
+  userMessage?: string 
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
     "https://jecen38796.app.n8n.cloud/webhook/779e9345-5b4b-4003-acc9-1fb32371c74f";
   const sessionId = getSessionId();
-  const chatInput = userMessage;
+  const chatInput = userMessage + promptType;
   const res = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

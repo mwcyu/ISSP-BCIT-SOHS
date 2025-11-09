@@ -169,7 +169,7 @@ export default function App() {
       | "standard2"
       | "standard3"
       | "standard4"
-      | "freechat",
+      | "",
     userMessage?: string
   ) => {
     let convId = activeConversationId;
@@ -196,7 +196,7 @@ export default function App() {
     if (!inputValue.trim()) return;
     const text = inputValue;
     setInputValue("");
-    sendToAI("freechat", text);
+    sendToAI("", text);
   };
 
   // ====== Handle standard buttons ======
