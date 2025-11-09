@@ -18,11 +18,12 @@ export async function sendMessageToAI(
   const webhookUrl =
     "https://jecen38796.app.n8n.cloud/webhook/ac610d54-5454-4415-a0ea-c57846c5bc11";
   const sessionId = getSessionId();
-  const chatInput = userMessage + promptType;
+  // const chatInput = userMessage + promptType;
+  const chatInput = (userMessage ?? '') + promptType;
   const res = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, promptType, chatInput }),
+    body: JSON.stringify({ sessionId, chatInput }),
   });
 
   if (!res.ok) {
