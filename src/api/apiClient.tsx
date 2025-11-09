@@ -16,7 +16,7 @@ export async function sendMessageToAI(
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
-    "https://jecen38796.app.n8n.cloud/webhook/779e9345-5b4b-4003-acc9-1fb32371c74f";
+    "https://jecen38796.app.n8n.cloud/webhook/ac610d54-5454-4415-a0ea-c57846c5bc11";
   const sessionId = getSessionId();
   const chatInput = userMessage + promptType;
   const res = await fetch(webhookUrl, {
