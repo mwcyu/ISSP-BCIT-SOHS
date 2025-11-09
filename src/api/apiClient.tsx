@@ -11,7 +11,7 @@ export async function sendMessageToAI(
     | "standard2"
     | "standard3"
     | "standard4"
-    | "hi",
+    | "",
   userMessage?: string 
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
