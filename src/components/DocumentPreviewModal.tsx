@@ -71,8 +71,8 @@ export function DocumentPreviewModal({
             {!loading && !summary && (
               <div className="h-full flex items-center justify-center text-gray-400">
                 <p>
-                  No summary yet. Once the AI (or test process) writes a summary
-                  for this session into Supabase, it will appear here.
+                  No summary yet. Once the AI writes a summary for this session
+                  it will appear here.
                 </p>
               </div>
             )}
