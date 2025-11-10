@@ -13,34 +13,57 @@ const standardsData = [
   {
     title: "Professional Responsibility",
     fullTitle: "Standard 1 – Professional Responsibility and Accountability",
-    subheadings: ["Professionalism & Responsibility (Standard 1)"]
+    subheadings: ["Professional accountability, honesty and transparency", 
+                  "Recognition of scope of practice and personal limitations", 
+                  "Clinical safety and risk management", 
+                  "Evidence-informed practice and self-directed learning", 
+                  "Professional conduct and respectful interactions", 
+                  "Self-care practices"]
   },
   {
     title: "Knowledge-Based Practice",
     fullTitle: "Standard 2 – Knowledge-Based Practice", 
     subheadings: [
-      "Clinical Skills & Knowledge (Standards 2 & 3)",
-      "Critical Thinking & Clinical Judgment (Standard 2)",
-      "Organization & Time Management (Standard 2)",
-      "Initiative & Engagement (Standard 2)",
-      "Safety & Quality of Care (Standards 2 & 4)"
+"Clinical competence and skill application",
+"Evidence-informed practice",
+"Clinical safety and risk management",
+"Critical thinking, clinical reasoning and clinical judgment",
+"Knowledge synthesis and application",
+"Adaptability and proactive thinking",
+"Individualized patient care, education and relational inquiry",
+"Pharmacology knowledge and safe medication practice",
+"Comprehensive reporting and accurate documentation",
+
     ]
   },
   {
     title: "Client-Focused Service",
     fullTitle: "Standard 3 – Client-Focused Provision of Service",
     subheadings: [
-      "Clinical Skills & Knowledge (Standards 2 & 3)",
-      "Communication & Interpersonal Skills (Standards 3 & 4)"
+"Interprofessional collaboration",
+"Conflict resolution",
+"Team communication",
+"Anticipatory planning",
+"Continuity of care",
+"Time management and organization",
+"Delegation",
+"Individual’s receiving care advocacy",
+
     ]
   },
   {
     title: "Ethical Practice",
     fullTitle: "Standard 4 – Ethical Practice",
     subheadings: [
-      "Communication & Interpersonal Skills (Standards 3 & 4)",
-      "Safety & Quality of Care (Standards 2 & 4)",
-      "Additional Comments (All Standards)"
+"Confidentiality maintenance and privacy protection",
+"Equitable care delivery and respect for diversity",
+"Therapeutic boundaries and professional relationship limits",
+"Social media boundaries",
+"Identification of ethical issues",
+"Health disparities reduction",
+"Anti-oppressive practices",
+"Safety advocacy",
+"Individual’s receiving care autonomy and informed consent",
     ]
   }
 ];
