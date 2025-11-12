@@ -16,7 +16,7 @@ export async function sendMessageToAI(
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
-    "https://hapame8004.app.n8n.cloud/webhook/779e9345-5b4b-4003-acc9-1fb32371c74f";
+    "https://hapame8004.app.n8n.cloud/webhook/cb73ede1-489f-4a13-b2cd-8bb0e3c3d9ca";
   const sessionId = getSessionId();
   // const chatInput = userMessage + promptType;
   const chatInput = (userMessage ?? '') + promptType;
