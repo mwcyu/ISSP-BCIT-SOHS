@@ -266,9 +266,6 @@ export default function App() {
       <ProgressModal
         isOpen={progressOpen}
         onClose={() => setProgressOpen(false)}
-        completedStandards={[]}
-        onToggleStandard={() => {}}
-        currentStandard={undefined}
       />
       <GuidelinesModal
         isOpen={guidelinesOpen}
