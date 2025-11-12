@@ -1,7 +1,7 @@
 # Care8 AI 🤖💬
 
-Care8 AI is a web-based application designed to help healthcare preceptors provide clear, structured feedback to students.  
-We rebuilt the original feedback chatbot into a fully coded solution with a clean, modern interface and the ability to export feedback via email.
+Care8 AI is a web-based application designed to help healthcare preceptors provide clear, structured feedback for students.  
+We rebuilt the original feedback chatbot into a fully coded solution with a clean, modern interface and the ability to export feedback via PDF.
 
 ---
 
@@ -10,7 +10,7 @@ We rebuilt the original feedback chatbot into a fully coded solution with a clea
 - Interactive AI chatbot for structured student feedback
 - Clean, intuitive web interface
 - Review and refine generated feedback outputs
-- Email final feedback reports directly from the app
+- Export final feedback reports directly from the app
 - Scalable backend and modular workflow automation
 
 ---
