@@ -1,4 +1,5 @@
 import { getSessionId } from "../utils/session";
+import { Standard } from "../types";
 
 import { db } from "./firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -12,18 +13,34 @@ export async function sendMessageToAI(
     | "standard3"
     | "standard4"
     | "",
-  userMessage?: string 
+  userMessage?: string,
+  standardData?: Standard
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
-    "https://hapame8004.app.n8n.cloud/webhook/779e9345-5b4b-4003-acc9-1fb32371c74f";
+    "https://hapame8004.app.n8n.cloud/webhook/cb73ede1-489f-4a13-b2cd-8bb0e3c3d9ca";
   const sessionId = getSessionId();
-  // const chatInput = userMessage + promptType;
-  const chatInput = (userMessage ?? '') + promptType;
+  
+  // Build payload with standard data if available
+  const payload: any = {
+    sessionId,
+    chatInput: (userMessage ?? '') + promptType,
+  };
+
+  // If standard data is provided, include it in the payload
+  if (standardData) {
+    payload.standard = {
+      id: standardData.id,
+      title: standardData.title,
+      subtitle: standardData.subtitle,
+      prompt: standardData.prompt,
+    };
+  }
+
   const res = await fetch(webhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, chatInput }),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {

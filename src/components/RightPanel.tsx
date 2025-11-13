@@ -1,12 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Send, Bot, User, Menu, ArrowLeft } from "lucide-react";
-
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+import { Send, Bot, Menu, User } from "lucide-react";
+import { Message, Standard } from "../types";
 
 interface RightPanelProps {
   messages: Message[];
@@ -14,14 +8,14 @@ interface RightPanelProps {
   onInputChange: (value: string) => void;
   onSendMessage: () => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
-  onStandardClick?: (prompt: string) => void;
+  onStandardClick?: (standard: Standard) => void;
   onMobileMenuClick?: () => void;
   onMobileBackClick?: () => void;
   showMobileControls?: boolean;
   onToggleSidebar?: () => void;
 }
 
-const standards = [
+const standards: Standard[] = [
   {
     id: '1',
     title: 'Standard 1',
@@ -51,6 +45,23 @@ const standards = [
       'What are the essential elements of ethical practice for nursing learners? How can I provide meaningful feedback on ethical decision-making and professional boundaries?',
   },
 ];
+
+// Standard Card Component
+const StandardCard = ({ standard, onClick }: { standard: Standard; onClick: () => void }) => (
+  <div
+    onClick={onClick}
+    className="group bg-white border border-gray-200 rounded-xl p-4 sm:p-6 cursor-pointer 
+               transition-all duration-200 hover:shadow-lg hover:border-[#003E6B] 
+               hover:scale-[1.02] active:scale-[0.98]"
+  >
+    <h3 className="text-lg sm:text-xl font-semibold text-[#003E6B] mb-2 group-hover:text-[#ffd700] transition-colors">
+      {standard.title}
+    </h3>
+    <p className="text-sm sm:text-base text-gray-600">
+      {standard.subtitle}
+    </p>
+  </div>
+);
 
 export function RightPanel({
   messages,
@@ -126,11 +137,11 @@ export function RightPanel({
                 {standards.map((standard) => (
                   <div
                     key={standard.id}
-                    onClick={() => onStandardClick?.(standard.prompt)}
-                    className="p-4 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all border-l-4 border-l-[#003E6B] hover:border-l-[#ffd700] flex flex-col"
+                    onClick={() => onStandardClick?.(standard)}
+                    className="p-4 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all border-l-4 border-l-[#003E6B] hover:border-l-[#ffd700] flex flex-col h-24 sm:h-28"
                   >
-                    <h5 className="text-gray-800 font-medium mb-1">{standard.title}</h5>
-                    <p className="text-sm text-gray-600">{standard.subtitle}</p>
+                    <h5 className="text-gray-800 font-medium mb-1 text-sm sm:text-base">{standard.title}</h5>
+                    <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">{standard.subtitle}</p>
                   </div>
                 ))}
               </div>

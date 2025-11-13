@@ -14,8 +14,10 @@ import {
 } from "lucide-react";
 import bcitLogo from "../assets/bcit-logo.png";
 
+import { UserRole } from "../types";
+
 interface PermanentSidebarProps {
-  role?: "preceptor" | "admin" | null;
+  role?: UserRole | null;
   onProgressClick: () => void;
   onGuidelinesClick: () => void;
   onPrivacyPolicyClick: () => void;

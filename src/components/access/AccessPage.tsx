@@ -35,6 +35,17 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
     setMessage("");
   };
 
+  // Handle Enter key press
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (view === "login") {
+        handleUserLogin();
+      } else {
+        handleAdminLogin();
+      }
+    }
+  };
+
   // ===== LOGIN / ADMIN LOGIN =====
   return (
     <div className="bcit-page">
@@ -46,7 +57,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
         </div>
 
         <div className="secure-box fade-area">
-          <h3 className="secure-title">🔒 Secure Access Required</h3>
+          <h5 className="secure-title">🔒 Secure Access Required</h5>
 
           {view === "login" ? (
             <>
@@ -58,6 +69,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 type="password"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="access-input"
                 placeholder="Enter access code"
               />
@@ -85,6 +97,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 type="password"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="access-input"
                 placeholder="Enter admin code"
               />
@@ -109,22 +122,24 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
           {message && <p className="access-message">{message}</p>}
         </div>
 
-        <div className="notice-box">
-          <p>⚠ This system is authorized for use by BCIT preceptors only.</p>
-        </div>
+        <div className="info-grid">
+          <div className="notice-box">
+            <p>⚠ This system is authorized for use by BCIT preceptors only.</p>
+          </div>
 
-        <div className="about-box">
-          <p className="about-title">About this tool:</p>
-          <ul>
-            <li>Structured feedback based on BCCNM standards</li>
-            <li>AI-powered prompting for detailed examples</li>
-            <li>Automated report generation</li>
-            <li>No personal data stored locally</li>
-          </ul>
-        </div>
+          <div className="about-box">
+            <p className="about-title">About this tool:</p>
+            <ul>
+              <li>Structured feedback based on BCCNM standards</li>
+              <li>AI-powered prompting for detailed examples</li>
+              <li>Automated report generation</li>
+              <li>No personal data stored locally</li>
+            </ul>
+          </div>
 
-        <div className="contact-box">
-          <p>Contact your clinical instructor if you need an access code.</p>
+          <div className="contact-box">
+            <p>Contact your clinical instructor if you need an access code.</p>
+          </div>
         </div>
 
         <footer className="footer">
