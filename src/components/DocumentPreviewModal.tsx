@@ -99,9 +99,6 @@ export function DocumentPreviewModal({
                     Once the AI generates a feedback summary for this session,
                     it will appear here automatically.
                   </p>
-                  <p className="text-xs text-gray-400 mt-4">
-                    Session ID: {sessionId}
-                  </p>
                 </div>
               </div>
             )}
@@ -115,9 +112,6 @@ export function DocumentPreviewModal({
                   <h3 className="text-2xl font-bold text-[#003E6B] mb-2">
                     Feedback Summary Report
                   </h3>
-                  <p className="text-xs text-gray-400">
-                    Session ID: {sessionId}
-                  </p>
                 </div>
 
                 <div className="space-y-6">
