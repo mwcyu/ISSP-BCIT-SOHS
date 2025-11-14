@@ -15,7 +15,7 @@ import {
 import bcitLogo from "../assets/bcit-logo.png";
 
 interface PermanentSidebarProps {
-  role?: "preceptor" | "admin" | null;
+  role?: "user" | "admin" | null;
   onProgressClick: () => void;
   onGuidelinesClick: () => void;
   onPrivacyPolicyClick: () => void;
@@ -32,9 +32,7 @@ interface PermanentSidebarProps {
 export function PermanentSidebar({
   role,
   onProgressClick,
-  onGuidelinesClick,
   onPrivacyPolicyClick,
-  onSettingsClick,
   onDocumentPreviewClick,
   onHomeClick,
   onFAQClick,
