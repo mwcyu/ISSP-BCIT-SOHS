@@ -152,7 +152,12 @@ export default function App() {
 
   // ====== AI message pipeline ======
   const sendToAI = async (
-    promptType: "standard1" | "standard2" | "standard3" | "standard4" | "freechat",
+    promptType:
+      | "standard1"
+      | "standard2"
+      | "standard3"
+      | "standard4"
+      | "",
     userMessage?: string
   ) => {
     let convId = activeConversationId;
@@ -172,7 +177,7 @@ export default function App() {
     if (!inputValue.trim()) return;
     const text = inputValue;
     setInputValue("");
-    sendToAI("freechat", text);
+    sendToAI("", text);
   };
 
   const handleStandardClick = (promptLabel: string) => {
