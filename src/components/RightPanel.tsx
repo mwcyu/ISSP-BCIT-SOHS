@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Send, Bot, User, Menu, ArrowLeft } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   id: string;
@@ -160,7 +162,12 @@ export function RightPanel({
                       ? "bg-[#003E6B] text-white"
                       : "bg-white text-gray-800 border border-gray-200"
                   }`}>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <div className="whitespace-pre-wrap prose prose-sm max-w-none text-inherit">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {String(message.content ?? "")}
+                    </ReactMarkdown>
+                  </div>
+
                   <p
                     className={`text-xs mt-2 ${
                       message.sender === "user"
