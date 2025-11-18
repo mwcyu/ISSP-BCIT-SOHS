@@ -191,10 +191,10 @@ export function RightPanel({
         )}
       </div>
 
-      {/* Message Input - Sits at Panel Bottom */}
-      <div className="mt-auto px-4 sm:px-6 pb-4 sm:pb-6">
+      {/* Message Input - Floating at Panel Bottom */}
+      <div className="mt-auto px-4 sm:px-6 pb-6 sm:pb-8">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-lg border border-gray-200 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4">
+          <div className="bg-white rounded-3xl shadow-2xl border border-gray-300 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4 transform transition-all duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5">
             <input
               type="text"
               value={inputValue}
