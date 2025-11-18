@@ -31,12 +31,32 @@ export function FAQModal({ isOpen, onClose }: FAQModalProps) {
             </button>
           </div>
 
-          {/* Content Area - Blank Placeholder */}
+          {/* Content Area*/}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-            <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-              <div className="text-center text-gray-400">
-                <p>FAQ content will appear here</p>
+            <div className="h-full flex items-center justify-center rounded-lg border-1 border border-gray-300 p-4 shadow-xl">
+            <div className="p-3 space-y-6 text-gray-700 max-h-[60vh] overflow-y-auto pr-2">
+              <div>
+              <h3 className="font-semibold">My progress bar isn’t updating, what should I do?</h3>
+              <p className="text-sm">
+              Make sure each section of is finaliazed and saved with the bot. The progress bar updates only after you are 100% done with a standard.
+              </p>
               </div>
+
+              <div>
+              <h3 className="font-semibold">The AI responses aren’t loading.</h3>
+              <p className="text-sm">
+              Make sure you have a stable internet connection. If the "Thinking" text doesn’t go away, refresh the page — the AI may have timed out and needs a new request.
+              </p>
+              </div>
+
+              <div>
+              <h3 className="font-semibold">What is the question mark button in the corner?</h3>
+              <p className="text-sm">
+              The question mark button provides helpful prompts to guide you if you’re unsure what feedback to write. 
+              It offers suggestions for all 4 standards.
+              </p>
+              </div>
+            </div>
             </div>
           </div>
         </div>

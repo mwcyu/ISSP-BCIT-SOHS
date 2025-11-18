@@ -55,7 +55,7 @@ const MessageBubble = ({ message }: { message: Message }) => {
           className={`inline-block p-2 sm:p-3 rounded-lg ${
             isUser
               ? 'bg-[#003E6B] text-white'
-              : 'bg-white border border-gray-200 text-gray-800'
+              : 'bg-white border border-gray-200 text-gray-800 '
           }`}
         >
           <div className={`text-sm sm:text-base ${isUser ? 'whitespace-pre-wrap' : 'markdown-content'}`}>
