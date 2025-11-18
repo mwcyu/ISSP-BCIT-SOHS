@@ -137,8 +137,8 @@ export function RightPanel({
                 {standards.map((standard) => (
                   <div
                     key={standard.id}
-                    onClick={() => onStandardClick?.(standard.id)}
-                    className="p-4 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all border-l-4 border-l-[#003E6B] hover:border-l-[#ffd700] flex flex-col"
+                    onClick={() => onStandardClick?.(standard)}
+                    className="p-4 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-all border-l-4 border-l-[#003E6B] hover:border-l-[#ffd700] flex flex-col h-24 sm:h-28"
                   >
                     <h5 className="text-gray-800 font-medium mb-1 text-sm sm:text-base">{standard.title}</h5>
                     <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">{standard.subtitle}</p>
@@ -194,7 +194,7 @@ export function RightPanel({
       {/* Message Input - Floating at Panel Bottom */}
       <div className="mt-auto px-4 sm:px-6 pb-6 sm:pb-8">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-300 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4 transform transition-all duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5">
+          <div className="bg-white shadow-2xl border border-gray-300 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4 transform transition-all rounded-lg duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5">
             <input
               type="text"
               value={inputValue}
@@ -206,7 +206,7 @@ export function RightPanel({
             <button
               onClick={onSendMessage}
               disabled={!inputValue.trim()}
-              className="p-2 sm:p-2.5 bg-[#003E6B] text-white rounded-full hover:bg-[#002a4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0"
+              className="p-2 sm:p-2.5 bg-[#003E6B] text-white rounded-full hover:bg-[#002a4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shrink-0"
             >
               <Send className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
