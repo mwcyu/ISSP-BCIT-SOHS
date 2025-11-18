@@ -84,7 +84,7 @@ export function RightPanel({
   }, [messages]);
 
   return (
-    <div className="flex-1 bg-[#f5f5dc] flex flex-col h-screen">
+    <div className="flex-1 bg-[#f5f5dc] flex flex-col h-screen relative">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -191,24 +191,26 @@ export function RightPanel({
         )}
       </div>
 
-      {/* Message Input */}
-      <div className="bg-white border-t border-gray-200 p-3 sm:p-4">
-        <div className="max-w-2xl mx-auto flex gap-2 sm:gap-3">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => onInputChange(e.target.value)}
-            onKeyPress={onKeyPress}
-            placeholder="Type a message..."
-            className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#003E6B] text-sm sm:text-base"
-          />
-          <button
-            onClick={onSendMessage}
-            disabled={!inputValue.trim()}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-[#003E6B] text-white rounded-lg hover:bg-[#002a4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-          >
-            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
+      {/* Message Input - Sits at Panel Bottom */}
+      <div className="mt-auto px-4 sm:px-6 pb-4 sm:pb-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-lg border border-gray-200 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => onInputChange(e.target.value)}
+              onKeyPress={onKeyPress}
+              placeholder="Type a message..."
+              className="flex-1 bg-transparent focus:outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400"
+            />
+            <button
+              onClick={onSendMessage}
+              disabled={!inputValue.trim()}
+              className="p-2 sm:p-2.5 bg-[#003E6B] text-white rounded-full hover:bg-[#002a4d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0"
+            >
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
