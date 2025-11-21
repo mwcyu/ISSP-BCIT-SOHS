@@ -2,6 +2,10 @@ import React, { useEffect, useRef } from "react";
 import { Send, Bot, Menu, User } from "lucide-react";
 import { Message, Standard } from "../types";
 
+// Markdown imports
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 interface RightPanelProps {
   messages: Message[];
   inputValue: string;
@@ -46,7 +50,6 @@ const standards: Standard[] = [
   },
 ];
 
-// Standard Card Component
 const StandardCard = ({
   standard,
   onClick,
@@ -78,10 +81,8 @@ export function RightPanel({
   showMobileControls = false,
   onToggleSidebar,
 }: RightPanelProps) {
-  // 👇 New reference for auto-scroll
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // 👇 Auto-scroll effect (runs when messages change)
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -109,14 +110,13 @@ export function RightPanel({
         </div>
       </div>
 
-      {/* Chat Messages */}
+      {/* Chat */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6">
         {messages.length === 0 ? (
+          /* Empty state */
           <div className="max-w-2xl mx-auto space-y-6">
-            {/* Intro Message */}
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-center mb-4">
-                {/* ✅ Circular bot icon */}
                 <div className="w-12 h-12 rounded-full bg-[#003E6B] flex items-center justify-center">
                   <Bot className="w-6 h-6 text-[#ffd700]" />
                 </div>
@@ -130,7 +130,6 @@ export function RightPanel({
               </p>
             </div>
 
-            {/* BCCNM Standards */}
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <h4 className="text-gray-800 mb-4 font-semibold">
                 BCCNM Standards of Practice:
@@ -153,6 +152,7 @@ export function RightPanel({
             </div>
           </div>
         ) : (
+          /* Chat messages */
           <div className="max-w-2xl mx-auto space-y-4">
             {messages.map((message) => (
               <div
@@ -165,13 +165,27 @@ export function RightPanel({
                     <Bot className="w-4 h-4 text-[#003E6B]" />
                   </div>
                 )}
+
                 <div
                   className={`max-w-[85%] sm:max-w-[70%] p-3 sm:p-4 rounded-2xl ${
                     message.sender === "user"
                       ? "bg-[#003E6B] text-white"
                       : "bg-white text-gray-800 border border-gray-200"
                   }`}>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {/* BOT → Markdown rendering */}
+                  {message.sender === "bot" ? (
+                    <div className="prose prose-sm max-w-none text-gray-800">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {typeof message.content === "string"
+                          ? message.content
+                          : String(message.content || "")}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
+
+                  {/* Timestamp */}
                   <p
                     className={`text-xs mt-2 ${
                       message.sender === "user"
@@ -184,6 +198,7 @@ export function RightPanel({
                     })}
                   </p>
                 </div>
+
                 {message.sender === "user" && (
                   <div className="w-8 h-8 rounded-full bg-[#003E6B] flex items-center justify-center overflow-hidden">
                     <User className="w-4 h-4 text-white" />
@@ -191,13 +206,12 @@ export function RightPanel({
                 )}
               </div>
             ))}
-            {/* 👇 Auto-scroll anchor (always at bottom) */}
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
 
-      {/* Message Input - Floating at Panel Bottom */}
+      {/* Input */}
       <div className="mt-auto px-4 sm:px-6 pb-6 sm:pb-8">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white shadow-2xl border border-gray-300 flex gap-2 sm:gap-3 items-center px-4 sm:px-6 py-3 sm:py-4 transform transition-all rounded-lg duration-200 hover:shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:-translate-y-0.5">
