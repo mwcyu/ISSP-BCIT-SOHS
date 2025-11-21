@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./AccessPage.css";
 import bcitLogo from "../../assets/bcit-logo.png";
+import { supabaseAccess } from "../../lib/supabaseAccessClient";
 
 type View = "login" | "admin-login" | "user" | "admin";
 
@@ -13,46 +14,53 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleUserLogin = () => {
-    if (code === "user123") {
-      onLoginSuccess("user"); // 👈 redirect to main site
-    } else {
-      setMessage("❌ Invalid user code.");
+  // -------------------------
+  // VALIDATION (Supabase)
+  // -------------------------
+  const validateCode = async (role: "user" | "admin") => {
+    const { data, error } = await supabaseAccess
+      .from("access_codes")
+      .select("code")
+      .eq("role", role)
+      .single();
+
+    if (error || !data) {
+      setMessage("❌ Unable to validate access code.");
+      return false;
     }
+
+    return data.code === code.trim();
   };
 
-  const handleAdminLogin = () => {
-    if (code === "admin123") {
-      onLoginSuccess("admin"); // 👈 redirect to main site
-    } else {
-      setMessage("❌ Invalid admin code.");
-    }
+  const handleUserLogin = async () => {
+    const ok = await validateCode("user");
+    if (ok) onLoginSuccess("user");
+    else setMessage("❌ Invalid user code.");
   };
 
-  const handleLogout = () => {
-    setView("login");
-    setCode("");
-    setMessage("");
+  const handleAdminLogin = async () => {
+    const ok = await validateCode("admin");
+    if (ok) onLoginSuccess("admin");
+    else setMessage("❌ Invalid admin code.");
   };
 
-  // Handle Enter key press
+  // -------------------------
+  // ENTER KEY
+  // -------------------------
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      if (view === "login") {
-        handleUserLogin();
-      } else {
-        handleAdminLogin();
-      }
-    }
+    if (e.key !== "Enter") return;
+    if (view === "login") handleUserLogin();
+    else handleAdminLogin();
   };
 
-  // ===== LOGIN / ADMIN LOGIN =====
+  // -------------------------
+  // UI (unchanged)
+  // -------------------------
   return (
     <div className="bcit-page">
       <div className="access-card">
         <div className="logo-section">
-          {/* <img src="../assets/bcit-logo.png" alt="BCIT Logo" className="bcit-logo"/> */}
-          <img src={bcitLogo} alt="BCIT Logo" className="bcit-logo"/>
+          <img src={bcitLogo} alt="BCIT Logo" className="bcit-logo" />
           <h2 className="bcit-subtitle">Clinical Feedback Helper</h2>
         </div>
 
@@ -65,6 +73,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 Enter your universal access code to begin the feedback process.
               </p>
               <label className="input-label">ACCESS CODE</label>
+
               <input
                 type="password"
                 value={code}
@@ -84,15 +93,16 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                   setCode("");
                   setMessage("");
                 }}
-                className="access-btn admin-btn"
-              >
+                className="access-btn admin-btn">
                 ADMIN ACCESS
               </button>
             </>
           ) : (
             <>
               <p className="secure-desc">Administrator login required.</p>
+
               <label className="input-label">ADMIN ACCESS CODE</label>
+
               <input
                 type="password"
                 value={code}
@@ -102,7 +112,9 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                 placeholder="Enter admin code"
               />
 
-              <button onClick={handleAdminLogin} className="access-btn main-btn">
+              <button
+                onClick={handleAdminLogin}
+                className="access-btn main-btn">
                 LOGIN AS ADMIN
               </button>
 
@@ -112,8 +124,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
                   setCode("");
                   setMessage("");
                 }}
-                className="access-btn admin-btn"
-              >
+                className="access-btn admin-btn">
                 BACK TO USER ACCESS
               </button>
             </>
