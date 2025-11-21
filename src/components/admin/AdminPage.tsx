@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AdminPage.css";
-import {
-  getAccessData,
-  setAdminCode,
-  setUserCode,
-  initializeDefaultCodes,
-} from "../../utils/accessStorage";
+import { supabaseAccess } from "../../lib/supabaseAccessClient";
 
 interface AdminPageProps {
   onBackClick: () => void;
@@ -14,81 +9,83 @@ interface AdminPageProps {
 export default function AdminPage({ onBackClick }: AdminPageProps) {
   const [adminCode, setAdminCodeInput] = useState("");
   const [userCode, setUserCodeInput] = useState("");
-  const [recoveryCode, setRecoveryCode] = useState("");
   const [statusMsg, setStatusMsg] = useState("");
 
-  // ✅ Load existing codes on mount
+  // Load codes from Supabase
   useEffect(() => {
     (async () => {
-      const data = (await getAccessData()) || (await initializeDefaultCodes());
-      setAdminCodeInput(data.adminCode || "");
-      setUserCodeInput(data.userCode || "");
-      setRecoveryCode(data.recoveryCode || "");
-    })();
-  }, []);
+      const { data, error } = await supabaseAccess
+        .from("access_codes")
+        .select("role, code");
 
-  // ✅ Handle save changes
-  const handleSave = async () => {
-    try {
-      if (!adminCode.trim() || !userCode.trim()) {
-        setStatusMsg("⚠ Please fill in both admin and user codes.");
+      if (error) {
+        console.error(error);
+        setStatusMsg("❌ Failed to load codes.");
         return;
       }
 
-      await setAdminCode(adminCode.trim());
-      await setUserCode(userCode.trim());
+      const adminRow = data.find((r) => r.role === "admin");
+      const userRow = data.find((r) => r.role === "user");
+
+      setAdminCodeInput(adminRow?.code ?? "");
+      setUserCodeInput(userRow?.code ?? "");
+    })();
+  }, []);
+
+  // Save codes to Supabase
+  const handleSave = async () => {
+    if (!adminCode.trim() || !userCode.trim()) {
+      setStatusMsg("⚠ Please fill in both admin and user codes.");
+      return;
+    }
+
+    try {
+      // Update ADMIN
+      await supabaseAccess
+        .from("access_codes")
+        .update({ code: adminCode.trim() })
+        .eq("role", "admin");
+
+      // Update USER
+      await supabaseAccess
+        .from("access_codes")
+        .update({ code: userCode.trim() })
+        .eq("role", "user");
+
       setStatusMsg("✅ Access codes updated successfully!");
     } catch (err) {
       console.error(err);
-      setStatusMsg("❌ Failed to update codes.");
+      setStatusMsg("❌ Failed to update Supabase.");
     }
   };
 
-  // ✅ Regenerate recovery code (random)
-  const handleRegenerateRecovery = () => {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let newCode = "";
-    for (let i = 0; i < 16; i++) {
-      if (i > 0 && i % 4 === 0) newCode += "-";
-      newCode += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setRecoveryCode(newCode);
-    setStatusMsg("✅ New recovery code generated. (Don't forget to save!)");
-  };
-
-  // ✅ Download access info
+  // Download backup file
   const handleDownloadInfo = async () => {
     try {
-      const data = await getAccessData();
       const now = new Date().toLocaleString();
 
       const content = `
-CARE8 — Access Information Backup
+CARE8 — Access Codes Backup
 Generated: ${now}
 
-Admin Code: ${data.adminCode || "(unavailable)"}
-User Code: ${data.userCode || "(unavailable)"}
-Recovery Code: ${data.recoveryCode || "(unavailable)"}
+Admin Code: ${adminCode}
+User Code: ${userCode}
 
-⚠ IMPORTANT SECURITY NOTICE ⚠
-- This file contains sensitive login information.
-- Store it in an encrypted or offline location (e.g., USB or secure notes app).
-- Do NOT share or upload this file publicly.
-- If you have recently changed passwords, download a new copy from the Admin Panel to ensure it’s up to date.
+Store securely. Do not share.
 `;
 
       const blob = new Blob([content.trim()], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `care8_access_info_${Date.now()}.txt`;
+      a.download = `care8_access_backup_${Date.now()}.txt`;
       a.click();
       URL.revokeObjectURL(url);
 
-      setStatusMsg("✅ Access info file downloaded successfully.");
+      setStatusMsg("✅ Backup downloaded.");
     } catch (err) {
       console.error(err);
-      setStatusMsg("❌ Failed to download access info.");
+      setStatusMsg("❌ Failed to download file.");
     }
   };
 
@@ -97,10 +94,9 @@ Recovery Code: ${data.recoveryCode || "(unavailable)"}
       <div className="admin-card">
         <h1 className="admin-title">🛠 Admin Panel</h1>
         <p className="admin-description">
-          Manage access codes, recovery, and backup information below.
+          Manage access codes and download backup information below.
         </p>
 
-        {/* ===== Input Section ===== */}
         <div className="admin-fields">
           <div className="admin-field-group">
             <label className="admin-label">Admin Code</label>
@@ -121,26 +117,8 @@ Recovery Code: ${data.recoveryCode || "(unavailable)"}
               onChange={(e) => setUserCodeInput(e.target.value)}
             />
           </div>
-
-          <div className="admin-field-group">
-            <label className="admin-label">Recovery Code</label>
-            <div className="recovery-row">
-              <input
-                type="text"
-                className="admin-input recovery-input"
-                value={recoveryCode}
-                readOnly
-              />
-              <button
-                className="admin-btn small-btn"
-                onClick={handleRegenerateRecovery}>
-                🔄 Regenerate
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* Buttons */}
         <div className="admin-actions">
           <button className="admin-btn save-btn" onClick={handleSave}>
             💾 Save Changes
@@ -153,13 +131,9 @@ Recovery Code: ${data.recoveryCode || "(unavailable)"}
           </button>
         </div>
 
-        {statusMsg && (
-          <p className="status-msg" style={{ marginTop: "10px" }}>
-            {statusMsg}
-          </p>
-        )}
+        {statusMsg && <p className="status-msg">{statusMsg}</p>}
 
-        <button onClick={onBackClick} className="admin-btn back-btn mt-8">
+        <button onClick={onBackClick} className="admin-btn back-btn">
           ← Back to Main App
         </button>
       </div>

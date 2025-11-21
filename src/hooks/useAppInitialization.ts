@@ -1,14 +1,12 @@
 import { useEffect } from "react";
-import { initializeDefaultCodes } from "../utils/accessStorage";
 
 /**
- * Custom hook to initialize app-wide settings and storage
+ * Custom hook to initialize app-wide settings.
+ * The old accessStorage system has been removed,
+ * so no initialization is required anymore.
  */
 export function useAppInitialization() {
   useEffect(() => {
-    const initialize = async () => {
-      await initializeDefaultCodes();
-    };
-    initialize();
+    // Nothing to initialize now.
   }, []);
 }
