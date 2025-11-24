@@ -4,10 +4,10 @@ import type { SessionSummary } from "../types/summary";
 
 /**
  * Converts the current session's summary record into a downloadable PDF.
- * Works with the Supabase-backed SessionSummary shape:
- * - sessionId
- * - created_at (ISO string)
- * - s1_summary, s2_summary, s3_summary, s4_summary
+ * Minimal modification:
+ * - REMOVE hard-coded labels
+ * - SUPPORT markdown headings (#, ##, ###)
+ * - REMOVE ** from headings only
  */
 export function exportSessionSummaryToPdf(summary: SessionSummary | null) {
   if (!summary) {
@@ -21,6 +21,7 @@ export function exportSessionSummaryToPdf(summary: SessionSummary | null) {
 
   // Title
   doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
   doc.text("Feedback Summary Report", marginX, y);
   y += 8;
 
@@ -29,6 +30,7 @@ export function exportSessionSummaryToPdf(summary: SessionSummary | null) {
     ? new Date(summary.created_at)
     : new Date();
   doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
   doc.text(`Generated: ${createdAt.toLocaleString()}`, marginX, y);
   y += 8;
 
@@ -37,32 +39,75 @@ export function exportSessionSummaryToPdf(summary: SessionSummary | null) {
   doc.line(marginX, y, 200 - marginX, y);
   y += 8;
 
-  // Standards list mapped from Supabase field names
-  const sections: { label: string; value?: string }[] = [
-    { label: "Standard 1", value: summary.s1_summary },
-    { label: "Standard 2", value: summary.s2_summary },
-    { label: "Standard 3", value: summary.s3_summary },
-    { label: "Standard 4", value: summary.s4_summary },
-  ];
+  // Only AI content — NO LABELS
+  const blocks = [
+    summary.s1_summary,
+    summary.s2_summary,
+    summary.s3_summary,
+    summary.s4_summary,
+  ].filter(Boolean);
 
   doc.setFontSize(12);
 
-  sections.forEach((section) => {
-    if (!section.value) return;
+  blocks.forEach((textBlock) => {
+    if (!textBlock) return;
 
-    // Section heading
-    doc.text(section.label + ":", marginX, y);
-    y += 6;
+    const rawLines = textBlock.split("\n");
 
-    // Wrap text within page width
-    const lines = doc.splitTextToSize(section.value, 200 - marginX * 2);
-    lines.forEach((line) => {
+    rawLines.forEach((rawLine) => {
+      let line = rawLine.trim();
+
+      // Page break
       if (y > 280) {
         doc.addPage();
         y = 16;
       }
-      doc.text(line, marginX, y);
-      y += 6;
+
+      // Clean heading (remove **)
+      const clean = line.replace(/\*\*/g, "");
+
+      // --- MARKDOWN HEADINGS ---
+      if (clean.startsWith("### ")) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text(clean.replace("### ", ""), marginX, y);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        y += 10;
+        return;
+      }
+
+      if (clean.startsWith("## ")) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        doc.text(clean.replace("## ", ""), marginX, y);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        y += 12;
+        return;
+      }
+
+      if (clean.startsWith("# ")) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text(clean.replace("# ", ""), marginX, y);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        y += 14;
+        return;
+      }
+
+      // Regular wrapped text
+      const wrapped = doc.splitTextToSize(clean, 200 - marginX * 2);
+      wrapped.forEach((l) => {
+        if (y > 280) {
+          doc.addPage();
+          y = 16;
+        }
+        doc.text(l, marginX, y);
+        y += 6;
+      });
+      y += 2;
     });
 
     y += 4;

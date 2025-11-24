@@ -7,24 +7,19 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { supabase } from "./supabase";
 
 export async function sendMessageToAI(
-  promptType:
-    | "standard1"
-    | "standard2"
-    | "standard3"
-    | "standard4"
-    | "",
+  promptType: "standard1" | "standard2" | "standard3" | "standard4" | "",
   userMessage?: string,
   standardData?: Standard
 ): Promise<string> {
   // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
-    "https://hapame8004.app.n8n.cloud/webhook/cb73ede1-489f-4a13-b2cd-8bb0e3c3d9ca";
+    "https://tedok79603.app.n8n.cloud/webhook/cb73ede1-489f-4a13-b2cd-8bb0e3c3d9ca";
   const sessionId = getSessionId();
-  
+
   // Build payload with standard data if available
   const payload: any = {
     sessionId,
-    chatInput: (userMessage ?? '') + promptType,
+    chatInput: (userMessage ?? "") + promptType,
   };
 
   // If standard data is provided, include it in the payload
