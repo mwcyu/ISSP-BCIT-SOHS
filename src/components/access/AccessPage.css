@@ -38,7 +38,7 @@
 
 .book-icon {
   font-size: 2rem;
-  background: #e6a600;
+  background: #ffd700;
   color: #0a1445;
   width: 48px;
   height: 48px;
@@ -52,7 +52,7 @@
   width: 80px;
   height: auto;
   border-radius: 10px;
-  background: #e6a600;
+  background: #ffd700;
   padding: 5px;
   box-shadow: 0 0 0 2px #0a1445;
   margin-bottom: 0.15rem;
@@ -70,7 +70,7 @@
 }
 
 .bcit-subtitle {
-  color: #f5b800;
+  color: #ffd700;
   font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: 0.4px;
@@ -121,8 +121,8 @@
 
 .access-input:focus {
   outline: none;
-  border-color: #f5b800;
-  box-shadow: 0 0 0 2px rgba(245, 184, 0, 0.25);
+  border-color: #ffd700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.25);
 }
 
 /* Buttons */
@@ -139,12 +139,12 @@
 }
 
 .main-btn {
-  background: linear-gradient(to right, #f5b800, #e6a600);
+  background: linear-gradient(to right, #ffd700, #f2c300);
   color: #0a1445;
 }
 
 .main-btn:hover {
-  background: linear-gradient(to right, #e6a600, #d19400);
+  background: linear-gradient(to right, #f2c300, #e5b600);
   transform: translateY(-2px);
 }
 
@@ -155,7 +155,7 @@
 }
 
 .admin-btn:hover {
-  background: rgba(245, 184, 0, 0.1);
+  background: rgba(255, 215, 0, 0.1);
 }
 
 /* Message */
@@ -167,7 +167,7 @@
   margin-top: 0.6rem;
   padding: 0.45rem;
   border-radius: 6px;
-  border-left: 3px solid #f5b800;
+  border-left: 3px solid #ffd700;
 }
 
 /* Info boxes - using grid for compact layout */
