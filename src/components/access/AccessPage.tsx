@@ -56,106 +56,132 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
   // -------------------------
   // UI (unchanged)
   // -------------------------
+  const handleViewChange = (target: View) => {
+    setView(target);
+    setCode("");
+    setMessage("");
+  };
+
   return (
     <div className="bcit-page">
-      <div className="access-card">
-        <div className="logo-section">
-          <img src={bcitLogo} alt="BCIT Logo" className="bcit-logo" />
-          <h2 className="bcit-subtitle">Clinical Feedback Helper</h2>
-        </div>
+      <div className="bcit-page__texture" aria-hidden="true" />
+      <div className="access-hero">
+        <header className="hero-header">
+          <div className="hero-badge">School of Health Sciences</div>
+          <h1>
+            Clinical Feedback <span>Helper</span>
+          </h1>
+          <p>
+            Secure access for BCIT preceptors to deliver structured, BCCNM-aligned
+            performance feedback with confidence.
+          </p>
+        </header>
 
-        <div className="secure-box fade-area">
-          <h5 className="secure-title">🔒 Secure Access Required</h5>
+        <div className="access-shell">
+          <section className="info-panel">
+            <img src={bcitLogo} alt="BCIT" className="info-panel__logo" />
+            <h2>Designed for modern clinical teaching</h2>
+            <p>
+              Guided workflows help you document observations, map them to
+              provincial standards, and export professional summaries in minutes.
+            </p>
 
-          {view === "login" ? (
-            <>
-              <p className="secure-desc">
-                Enter your universal access code to begin the feedback process.
-              </p>
-              <label className="input-label">ACCESS CODE</label>
-
-              <input
-                type="password"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="access-input"
-                placeholder="Enter access code"
-              />
-
-              <button onClick={handleUserLogin} className="access-btn main-btn">
-                ACCESS SYSTEM
-              </button>
-
-              <button
-                onClick={() => {
-                  setView("admin-login");
-                  setCode("");
-                  setMessage("");
-                }}
-                className="access-btn admin-btn">
-                ADMIN ACCESS
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="secure-desc">Administrator login required.</p>
-
-              <label className="input-label">ADMIN ACCESS CODE</label>
-
-              <input
-                type="password"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="access-input"
-                placeholder="Enter admin code"
-              />
-
-              <button
-                onClick={handleAdminLogin}
-                className="access-btn main-btn">
-                LOGIN AS ADMIN
-              </button>
-
-              <button
-                onClick={() => {
-                  setView("login");
-                  setCode("");
-                  setMessage("");
-                }}
-                className="access-btn admin-btn">
-                BACK TO USER ACCESS
-              </button>
-            </>
-          )}
-
-          {message && <p className="access-message">{message}</p>}
-        </div>
-
-        <div className="info-grid">
-          <div className="notice-box">
-            <p>⚠ This system is authorized for use by BCIT preceptors only.</p>
-          </div>
-
-          <div className="about-box">
-            <p className="about-title">About this tool:</p>
-            <ul>
-              <li>Structured feedback based on BCCNM standards</li>
-              <li>AI-powered prompting for detailed examples</li>
-              <li>Automated report generation</li>
-              <li>No personal data stored locally</li>
+            <ul className="info-panel__list">
+              <li>Guided prompts mapped to BCCNM standards</li>
+              <li>Evidence-based coaching suggestions</li>
+              <li>Secure PDF-ready summaries</li>
+              <li>Support for preceptors &amp; clinical leads</li>
             </ul>
-          </div>
 
-          <div className="contact-box">
-            <p>Contact your clinical instructor if you need an access code.</p>
-          </div>
+            <div className="contact-card">
+              <p className="contact-card__label">Need help?</p>
+              <p>Contact your clinical instructor or Program Operations.</p>
+              <a href="mailto:sohs@bcit.ca">sohs@bcit.ca</a>
+            </div>
+          </section>
+
+          <section className="form-panel">
+            <div className="form-tabs" role="tablist">
+              <button
+                className={`form-tab ${view === "login" ? "is-active" : ""}`}
+                onClick={() => handleViewChange("login")}
+                role="tab"
+              >
+                Preceptor Access
+              </button>
+              <button
+                className={`form-tab ${view === "admin-login" ? "is-active" : ""}`}
+                onClick={() => handleViewChange("admin-login")}
+                role="tab"
+              >
+                Administrator
+              </button>
+            </div>
+
+            <div className="secure-box fade-area">
+              <h5 className="secure-title">🔒 Secure Access</h5>
+
+              {view === "login" ? (
+                <>
+                  <p className="secure-desc">
+                    Enter your preceptor access code to launch the feedback workspace.
+                  </p>
+                  <label className="input-label">Preceptor access code</label>
+
+                  <input
+                    type="password"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className="access-input"
+                    placeholder="••••••••"
+                  />
+
+                  <button
+                    onClick={handleUserLogin}
+                    className="access-btn main-btn">
+                    Access system
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="secure-desc">
+                    Administrators can manage standards, prompts, and analytics.
+                  </p>
+
+                  <label className="input-label">Administrator code</label>
+
+                  <input
+                    type="password"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className="access-input"
+                    placeholder="••••••••"
+                  />
+
+                  <button
+                    onClick={handleAdminLogin}
+                    className="access-btn main-btn">
+                    Login as admin
+                  </button>
+                </>
+              )}
+
+              {message && <p className="access-message">{message}</p>}
+
+              <div className="notice-box">
+                <p>⚠ Authorized BCIT clinical personnel only.</p>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <footer className="footer">
-          <p>British Columbia Institute of Technology</p>
-          <p>School of Health Sciences – Nursing Program</p>
+        <footer className="bcit-footer">
+          <div>
+            British Columbia Institute of Technology · School of Health Sciences
+          </div>
+          <div>Clinical Education &amp; Student Success</div>
         </footer>
       </div>
     </div>
