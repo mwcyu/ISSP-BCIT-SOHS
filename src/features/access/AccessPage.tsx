@@ -66,26 +66,27 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-background font-sans text-text-main">
       {/* Left Panel - Brand & Info */}
-      <div className="lg:w-1/2 bg-bcit-blue relative overflow-hidden flex flex-col justify-between p-6 lg:p-16 text-white">
+      {/* Left Panel - Brand & Info */}
+      <div className="lg:w-1/2 bg-bcit-blue relative overflow-hidden flex flex-col justify-between p-6 pt-12 pb-24 lg:p-16 text-white shrink-0">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-bcit-dark/50 to-transparent" />
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-4 mb-8 lg:mb-12">
-            {/* Logo Container: Added white background to ensure logo visibility against dark theme */}
+        <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="flex items-center gap-4 mb-6 lg:mb-12">
+            {/* Logo Container */}
             <div className="bg-white p-2 rounded-lg shadow-sm">
               <img src={bcitLogo} alt="BCIT" className="h-8 lg:h-10 w-auto object-contain" />
             </div>
-            <div className="h-8 w-px bg-white/30" />
-            <span className="font-medium tracking-wide text-white/90 text-sm lg:text-base">School of Health Sciences</span>
+            <div className="h-8 w-px bg-white/30 hidden lg:block" />
+            <span className="font-medium tracking-wide text-white/90 text-sm lg:text-base hidden lg:block">School of Health Sciences</span>
           </div>
 
-          <h1 className="text-3xl lg:text-6xl font-bold leading-tight mb-4 lg:mb-6">
+          <h1 className="text-3xl lg:text-6xl font-bold leading-tight mb-2 lg:mb-6">
             Clinical Feedback <span className="text-bcit-gold">Helper</span>
           </h1>
 
-          <p className="text-base lg:text-xl text-blue-100 max-w-xl leading-relaxed mb-8 lg:mb-12">
+          <p className="text-sm lg:text-xl text-blue-100 max-w-xl leading-relaxed mb-0 lg:mb-12 hidden lg:block">
             Empowering preceptors with AI-assisted tools to deliver structured,
             standards-based feedback for nursing students.
           </p>
@@ -97,14 +98,15 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
           </div>
         </div>
 
-        <div className="relative z-10 mt-8 lg:mt-12 text-xs lg:text-sm text-blue-200/80">
+        <div className="relative z-10 mt-8 lg:mt-12 text-xs lg:text-sm text-blue-200/80 hidden lg:block">
           © {new Date().getFullYear()} British Columbia Institute of Technology
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="lg:w-1/2 flex items-center justify-center p-6 bg-gray-50/50">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-8 lg:p-10 transition-all duration-500">
+      {/* Right Panel - Login Form */}
+      <div className="lg:w-1/2 flex items-center justify-center p-4 lg:p-6 bg-gray-50/50 -mt-12 lg:mt-0 z-20">
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-10 transition-all duration-500">
 
           {/* Role Switcher */}
           <div className="flex p-1 bg-gray-100 rounded-xl mb-8">
