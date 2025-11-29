@@ -5,7 +5,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 import { AuthProvider, ConversationProvider, UIProvider } from "./contexts";
-import LiveSessionDocumentPreview from "./components/LiveSessionDocumentPreview";
+import LiveSessionDocumentPreview from "./features/chat/components/LiveSessionDocumentPreview";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

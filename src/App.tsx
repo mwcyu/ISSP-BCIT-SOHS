@@ -1,15 +1,15 @@
-import React from "react";
-import { PermanentSidebar } from "./components/PermanentSidebar";
-import { RightPanel } from "./components/RightPanel";
-import { ProgressModal } from "./components/ProgressModal";
-import { GuidelinesModal } from "./components/GuidelinesModal";
-import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
-import { SettingsModal } from "./components/SettingsModal";
-import { DocumentPreviewModal } from "./components/DocumentPreviewModal";
-import { PromptHelperButton } from "./components/PromptHelperButton";
-import { FAQModal } from "./components/FAQModal";
-import AccessPage from "./components/access/AccessPage";
-import AdminPage from "./components/admin/AdminPage";
+import { useState } from "react";
+import { Sidebar } from "./components/layout/Sidebar";
+import { RightPanel } from "./features/chat/RightPanel";
+import { ProgressModal } from "./components/modals/ProgressModal";
+import { GuidelinesModal } from "./components/modals/GuidelinesModal";
+import { PrivacyPolicyModal } from "./components/modals/PrivacyPolicyModal";
+import { SettingsModal } from "./components/modals/SettingsModal";
+import { DocumentPreviewModal } from "./components/modals/DocumentPreviewModal";
+import { PromptHelperButton } from "./features/chat/components/PromptHelperButton";
+import { FAQModal } from "./components/modals/FAQModal";
+import AccessPage from "./features/access/AccessPage";
+import AdminPage from "./features/admin/AdminPage";
 
 import { useAuth, useConversations, useUI } from "./contexts";
 import { useAppInitialization } from "./hooks/useAppInitialization";
@@ -41,11 +41,15 @@ export default function App() {
     setCurrentPage,
   } = useUI();
 
+  // Mobile Sidebar State
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   // ====== Event Handlers ======
   const handleLogout = () => {
     logout();
     clearConversations();
     setCurrentPage("main");
+    setIsMobileSidebarOpen(false);
   };
 
   const handleSendMessage = () => {
@@ -61,7 +65,8 @@ export default function App() {
 
   const handleSidebarAction = (action: () => void) => {
     action();
-    if (window.innerWidth < 1024) toggleSidebar();
+    // Close mobile sidebar on action
+    setIsMobileSidebarOpen(false);
   };
 
   const handleHomeClick = () => {
@@ -69,17 +74,18 @@ export default function App() {
     setActiveConversationId(null);
     setInputValue("");
     setCurrentPage("main");
+    setIsMobileSidebarOpen(false);
   };
 
   // ====== Login & Admin Handling ======
   if (!isAuthenticated) {
     return (
-      <AccessPage 
+      <AccessPage
         onLoginSuccess={(type) => {
           // Map "user" to "preceptor" for backwards compatibility
           const mappedRole = type === "user" ? "preceptor" : type;
           login(mappedRole);
-        }} 
+        }}
       />
     );
   }
@@ -90,14 +96,12 @@ export default function App() {
 
   // ====== Main App UI ======
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar - collapsible & overlay on mobile */}
-      <PermanentSidebar
+      <Sidebar
         role={role}
         onProgressClick={() => handleSidebarAction(() => openModal("progress"))}
-        onGuidelinesClick={() => handleSidebarAction(() => openModal("guidelines"))}
         onPrivacyPolicyClick={() => handleSidebarAction(() => openModal("privacyPolicy"))}
-        onSettingsClick={() => handleSidebarAction(() => openModal("settings"))}
         onDocumentPreviewClick={() => handleSidebarAction(() => openModal("documentPreview"))}
         onFAQClick={() => handleSidebarAction(() => openModal("faq"))}
         onHomeClick={() => handleSidebarAction(handleHomeClick)}
@@ -105,6 +109,9 @@ export default function App() {
         onLogoutClick={() => handleSidebarAction(handleLogout)}
         isCollapsed={leftSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
+        // Mobile Props
+        isMobileOpen={isMobileSidebarOpen}
+        onMobileClose={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Right panel - main chat area */}
@@ -114,15 +121,9 @@ export default function App() {
           inputValue={inputValue}
           onInputChange={setInputValue}
           onSendMessage={handleSendMessage}
-          onKeyPress={(e: React.KeyboardEvent) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSendMessage();
-            }
-          }}
           onStandardClick={handleStandardClick}
           showMobileControls={true}
-          onToggleSidebar={toggleSidebar}
+          onMobileMenuClick={() => setIsMobileSidebarOpen(true)}
         />
       </div>
 
@@ -131,25 +132,25 @@ export default function App() {
         isOpen={modals.progress}
         onClose={() => closeModal("progress")}
       />
-      <GuidelinesModal 
-        isOpen={modals.guidelines} 
-        onClose={() => closeModal("guidelines")} 
+      <GuidelinesModal
+        isOpen={modals.guidelines}
+        onClose={() => closeModal("guidelines")}
       />
-      <PrivacyPolicyModal 
-        isOpen={modals.privacyPolicy} 
-        onClose={() => closeModal("privacyPolicy")} 
+      <PrivacyPolicyModal
+        isOpen={modals.privacyPolicy}
+        onClose={() => closeModal("privacyPolicy")}
       />
-      <SettingsModal 
-        isOpen={modals.settings} 
-        onClose={() => closeModal("settings")} 
+      <SettingsModal
+        isOpen={modals.settings}
+        onClose={() => closeModal("settings")}
       />
-      <DocumentPreviewModal 
-        isOpen={modals.documentPreview} 
-        onClose={() => closeModal("documentPreview")} 
+      <DocumentPreviewModal
+        isOpen={modals.documentPreview}
+        onClose={() => closeModal("documentPreview")}
       />
-      <FAQModal 
-        isOpen={modals.faq} 
-        onClose={() => closeModal("faq")} 
+      <FAQModal
+        isOpen={modals.faq}
+        onClose={() => closeModal("faq")}
       />
 
       <PromptHelperButton currentStandard={activeConversation?.currentStandard ?? 1} />

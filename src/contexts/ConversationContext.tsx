@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Conversation, Message, StandardType, Standard } from "../types";
-import { sendMessageToAI } from "../api/apiClient";
+import { sendMessageToAI } from "../services/apiClient";
 
 interface ConversationContextType {
   conversations: Conversation[];
