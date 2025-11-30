@@ -1,5 +1,5 @@
 // src/types/summary.ts
-// import type { Timestamp } from "firebase/firestore";
+
 
 /**
  * Represents one user's (one browser tab's) summary document in Firestore.

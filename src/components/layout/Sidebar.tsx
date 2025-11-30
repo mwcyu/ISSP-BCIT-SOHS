@@ -50,7 +50,7 @@ const SidebarItem = ({
 }: SidebarItemProps) => {
   // On mobile, we always want full width items if the sidebar is open
   const layoutClasses = isCollapsed
-    ? "justify-center h-10 w-10 p-0 mx-auto hidden lg:flex" // Hide collapsed items on mobile, only show on desktop
+    ? "lg:justify-center lg:h-10 lg:w-10 lg:p-0 lg:mx-auto w-[calc(100%-16px)] px-3 py-2.5 gap-3" // Collapsed on desktop, full on mobile
     : "w-[calc(100%-16px)] px-3 py-2.5 gap-3";
 
   const variantClasses = variant === "danger"
@@ -73,14 +73,18 @@ const SidebarItem = ({
       <Icon
         size={20}
         className={cn(
-          "transition-transform duration-200",
-          isCollapsed ? "group-hover:scale-110" : "",
+          "transition-transform duration-200 shrink-0",
+          isCollapsed ? "lg:group-hover:scale-110" : "",
           isActive ? "text-bcit-gold" : "text-current group-hover:text-blue-50"
         )}
       />
-      {(!isCollapsed || window.innerWidth < 1024) && (
-        <span className="text-sm tracking-wide truncate">{label}</span>
-      )}
+
+      <span className={cn(
+        "text-sm tracking-wide truncate transition-all duration-200",
+        isCollapsed ? "lg:hidden" : ""
+      )}>
+        {label}
+      </span>
 
       {/* Active Indicator for Collapsed State (Desktop only) */}
       {isCollapsed && isActive && (
@@ -91,11 +95,16 @@ const SidebarItem = ({
 };
 
 const SectionHeader = ({ label, isCollapsed }: { label: string; isCollapsed: boolean }) => {
-  if (isCollapsed) return <div className="h-4 hidden lg:block" />;
   return (
-    <p className="px-5 mt-6 mb-2 text-[10px] font-bold text-blue-300/60 uppercase tracking-widest">
-      {label}
-    </p>
+    <>
+      <div className={cn("h-4 hidden", isCollapsed ? "lg:block" : "")} />
+      <p className={cn(
+        "px-5 mt-6 mb-2 text-[10px] font-bold text-blue-300/60 uppercase tracking-widest",
+        isCollapsed ? "lg:hidden" : ""
+      )}>
+        {label}
+      </p>
+    </>
   );
 };
 
@@ -113,6 +122,18 @@ export function Sidebar({
   isMobileOpen = false,
   onMobileClose,
 }: SidebarProps) {
+  // Close mobile sidebar on resize if screen becomes large
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024 && isMobileOpen && onMobileClose) {
+        onMobileClose();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobileOpen, onMobileClose]);
+
   return (
     <>
       {/* Mobile Backdrop */}
@@ -153,21 +174,23 @@ export function Sidebar({
         {/* Header / Logo Area */}
         <div className={cn(
           "flex items-center h-[72px] border-b border-white/5 transition-all duration-300",
-          isCollapsed ? "lg:justify-center lg:px-0" : "px-5 gap-3"
+          isCollapsed ? "lg:justify-center lg:px-0 px-5 gap-3" : "px-5 gap-3"
         )}>
           <div className="relative shrink-0 w-9 h-9 bg-bcit-gold rounded-lg p-1 shadow-sm overflow-hidden">
             <img src={bcitLogo} alt="BCIT" className="w-full h-full object-contain" />
           </div>
-          {(!isCollapsed || isMobileOpen) && (
-            <div className="flex flex-col overflow-hidden">
-              <h1 className="text-base font-bold text-white whitespace-nowrap leading-none mb-1">Feedback Helper</h1>
-              {role && (
-                <span className="text-[10px] text-bcit-gold font-medium uppercase tracking-wider leading-none opacity-90">
-                  {role} Workspace
-                </span>
-              )}
-            </div>
-          )}
+
+          <div className={cn(
+            "flex flex-col overflow-hidden transition-all duration-200",
+            isCollapsed ? "lg:hidden" : ""
+          )}>
+            <h1 className="text-base font-bold text-white whitespace-nowrap leading-none mb-1">Feedback Helper</h1>
+            {role && (
+              <span className="text-[10px] text-bcit-gold font-medium uppercase tracking-wider leading-none opacity-90">
+                {role} Workspace
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Scrollable Content */}

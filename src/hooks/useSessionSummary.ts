@@ -1,7 +1,5 @@
 // src/hooks/useSessionSummary.ts
 import { useEffect, useMemo, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../lib/firebase.js";
 
 import { getSessionId } from "../utils/session";
 import type { SessionSummary } from "../types/summary";

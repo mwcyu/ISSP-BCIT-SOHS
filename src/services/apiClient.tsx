@@ -43,23 +43,7 @@ export async function sendMessageToAI(
 
   console.log("n8n response:", data);
 
-  // if (!data.update === true) {
-  //   try {
-  //     const sessionRef = doc(db, "session_feedback", "test_session_id");
-  //     const sessionSnap = await getDoc(sessionRef);
 
-  //     if (sessionSnap.exists()) {
-  //       const latestSessionData = sessionSnap.data();
-  //       console.log("💾 Session data fetched and stored:", latestSessionData);
-  //     } else {
-  //       console.log("⚠️ No session found in Firestore for this sessionId");
-  //       const latestSessionData = null;
-  //     }
-  //   } catch (err) {
-  //     console.error("❌ Error fetching session from Firestore:", err);
-  //     const latestSessionData = null;
-  //   }
-  // }
 
   const reply = data.output ?? "✅ Message sent to n8n workflow!";
 
