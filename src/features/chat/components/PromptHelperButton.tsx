@@ -62,7 +62,7 @@ const standardPrompts = {
         "Describe situations where the learner identified moral or ethical concerns. How did they respond?",
         "How does the learner use therapeutic communication to build relationships with individual's receiving cares?",
         "How does the learner advocate for individual's receiving cares experiencing vulnerable circumstances?",
-        "Describe the learner's approach to caring for marginalized or underserved individual's receiving care.",
+        "Describe the learner's approach to caring for marginalized or underserved individual's receiving care?",
         "How does the learner empower individual's receiving care to participate in their health decisions?",
         "How well does the learner adapt their approach for individual's receiving care with cognitive or physical limitations?",
         "How does the learner create an environment where individual's receiving care feel culturally safe?",
@@ -98,78 +98,32 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
     const showPopover = isOpen || isHovered;
 
     // Compute responsive dimensions
-    const popoverWidth = isSmall ? '85vw' : isMobile ? '90vw' : '95vw';
-    const popoverMaxHeight = isSmall ? '35vh' : isMobile ? '40vh' : '70vh';
+    const popoverWidth = isSmall ? 'w-[85vw]' : isMobile ? 'w-[90vw]' : 'w-[95vw]';
+    const popoverMaxHeight = isSmall ? 'max-h-[35vh]' : isMobile ? 'max-h-[40vh]' : 'max-h-[70vh]';
 
     return (
-        <div
-            style={{
-                position: 'fixed',
-                bottom: isMobile ? "4.3rem" : "5.7rem",
-                right: isMobile ? "0.5rem" : "0.7rem",
-                zIndex: 50,
-                pointerEvents: 'auto',
-            }}
-        >
+        <div className={`fixed z-50 pointer-events-auto ${isMobile ? 'bottom-[4.3rem] right-2' : 'bottom-[5.7rem] right-[0.7rem]'}`}>
             {/* Popover */}
             {showPopover && (
                 <div
-                    style={{
-                        position: 'absolute',
-                        bottom: '100%',
-                        right: 0,
-                        transform: 'translateX(0%)',
-                        marginBottom: '12px',
-                        width: popoverWidth,
-                        maxWidth: '420px',
-                        maxHeight: popoverMaxHeight,
-                        backgroundColor: 'white',
-                        borderRadius: '0.5rem',
-                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                        border: '1px solid #e5e7eb',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflow: 'hidden',
-                    }}
+                    className={`absolute bottom-full right-0 translate-x-0 mb-3 max-w-[420px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden ${popoverWidth} ${popoverMaxHeight}`}
                 >
                     {/* Header */}
-                    <div
-                        style={{
-                            backgroundColor: '#003E6B',
-                            color: 'white',
-                            padding: '0.75rem 1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexShrink: 0,
-                        }}
-                    >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className="bg-bcit-blue text-white px-4 py-3 flex items-center justify-between shrink-0">
+                        <div className="flex items-center gap-2">
                             <HelpCircle size={20} />
-                            <h3 style={{ fontSize: '0.875rem', fontWeight: 500 }}>Prompt Questions</h3>
+                            <h3 className="text-sm font-medium">Prompt Questions</h3>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            style={{
-                                padding: '0.25rem',
-                                borderRadius: '0.25rem',
-                                transition: 'background-color 0.2s',
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)')}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                            className="p-1 rounded hover:bg-white/20 transition-colors"
                         >
                             <X size={16} />
                         </button>
                     </div>
 
                     {/* Scrollable Accordion Content */}
-                    <div
-                        style={{
-                            overflowY: 'auto',
-                            flex: 1,
-                            padding: '1rem',
-                        }}
-                    >
+                    <div className="overflow-y-auto flex-1 p-4">
                         <Accordion type="multiple" className="w-full">
                             {[1, 2, 3, 4].map((standardNum) => {
                                 const prompts = standardPrompts[standardNum as keyof typeof standardPrompts] || [];
@@ -181,7 +135,7 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
                                             <span
                                                 className={
                                                     standardNum === currentStandard
-                                                        ? "text-[#003E6B] font-medium"
+                                                        ? "text-bcit-blue font-medium"
                                                         : "text-gray-700"
                                                 }
                                             >
@@ -193,24 +147,7 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
                                                 {prompts.map((prompt, index) => (
                                                     <li
                                                         key={index}
-                                                        style={{
-                                                            fontSize: '0.875rem',
-                                                            color: '#374151',
-                                                            paddingLeft: '0.75rem',
-                                                            borderLeft: '2px solid #d1d5db',
-                                                            paddingTop: '0.25rem',
-                                                            paddingBottom: '0.25rem',
-                                                            transition: 'all 0.2s',
-                                                            cursor: 'pointer',
-                                                        }}
-                                                        onMouseEnter={(e) => {
-                                                            e.currentTarget.style.borderLeftColor = '#ffd700';
-                                                            e.currentTarget.style.backgroundColor = '#f9fafb';
-                                                        }}
-                                                        onMouseLeave={(e) => {
-                                                            e.currentTarget.style.borderLeftColor = '#d1d5db';
-                                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                                        }}
+                                                        className="text-sm text-gray-700 pl-3 border-l-2 border-gray-300 py-1 transition-all cursor-pointer hover:border-bcit-gold hover:bg-gray-50"
                                                     >
                                                         {prompt}
                                                     </li>
@@ -230,24 +167,7 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
                 onClick={() => setIsOpen(!isOpen)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                style={{
-                    backgroundColor: '#003E6B',
-                    color: 'white',
-                    padding: '0.75rem',
-                    borderRadius: '9999px',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#002a4d';
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                }}
-                onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#003E6B';
-                    e.currentTarget.style.transform = 'scale(1)';
-                }}
+                className="bg-bcit-blue text-white p-3 rounded-full shadow-lg hover:bg-bcit-dark hover:scale-110 transition-all duration-200 border-none cursor-pointer"
                 title="View prompt questions"
             >
                 <HelpCircle size={24} />

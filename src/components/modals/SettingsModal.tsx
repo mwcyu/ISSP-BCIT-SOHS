@@ -21,10 +21,16 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         className="fixed inset-0 bg-black/50 z-50"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white rounded-lg shadow-xl max-w-md w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-bcit-blue">Settings</h2>
@@ -35,7 +41,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <X className="w-6 h-6 text-gray-600" />
             </button>
           </div>
-          
+
           {/* Content */}
           <div className="p-6 space-y-6">
             {/* Text Size Setting */}

@@ -1,36 +1,61 @@
-import React from 'react';
+import { useRef, useEffect } from 'react';
 import { Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Message } from '../../../types';
+import { Message, Standard } from '../../../types';
+import rehypeRaw from 'rehype-raw';
+import { StandardCard } from './StandardCard';
 
 interface ChatAreaProps {
   messages: Message[];
   onSuggestedPrompt: (prompt: string) => void;
+  onStandardClick?: (standard: Standard) => void;
 }
 
-const suggestedPrompts = [
-  "How can I provide constructive feedback on clinical skills?",
-  "What are key indicators of professional responsibility in nursing learners?",
-  "How do I address communication concerns with a learner?", 
-  "What specific examples should I include in feedback?",
-  "How can I support a struggling learner's development?",
-  "What documentation should I include for client-focused care?"
+const standards: Standard[] = [
+  {
+    id: "1",
+    title: "Standard 1",
+    subtitle: "Professional Responsibility",
+    prompt:
+      "How can I provide effective feedback on professional responsibility and accountability for nursing learners? Include specific examples and assessment criteria.",
+  },
+  {
+    id: "2",
+    title: "Standard 2",
+    subtitle: "Knowledge-Based Practice",
+    prompt:
+      "What should I look for when evaluating a nursing learner's knowledge-based practice? How do I provide constructive feedback on clinical skills and evidence-based decision making?",
+  },
+  {
+    id: "3",
+    title: "Standard 3",
+    subtitle: "Client-Focused Service",
+    prompt:
+      "How do I assess and provide feedback on client-focused care? What are key indicators of therapeutic communication and patient advocacy in nursing learners?",
+  },
+  {
+    id: "4",
+    title: "Standard 4",
+    subtitle: "Ethical Practice",
+    prompt:
+      "What are the essential elements of ethical practice for nursing learners? How can I provide meaningful feedback on ethical decision-making and professional boundaries?",
+  },
 ];
 
 // Reusable Avatar Component
 const Avatar = ({ sender }: { sender: 'user' | 'bot' }) => {
+  // ... (Avatar implementation)
   const isUser = sender === 'user';
   return (
     <div
-      className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
-        isUser ? 'bg-bcit-blue' : 'bg-bcit-gold'
-      }`}
+      className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center shadow-sm mt-1 ${isUser ? 'bg-bcit-gold' : 'bg-white border border-gray-200'
+        }`}
     >
       {isUser ? (
-        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+        <User className="w-5 h-5 text-bcit-dark" />
       ) : (
-        <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-bcit-blue" />
+        <Bot className="w-5 h-5 text-bcit-blue" />
       )}
     </div>
   );
@@ -38,122 +63,117 @@ const Avatar = ({ sender }: { sender: 'user' | 'bot' }) => {
 
 // Message Bubble Component
 const MessageBubble = ({ message }: { message: Message }) => {
+  // ... (MessageBubble implementation)
   const isUser = message.sender === 'user';
-  
-  // Debug: Log the message content to see what we're actually receiving
-  if (!isUser) {
-    console.log('Bot message content:', message.content);
-    console.log('Content type:', typeof message.content);
-  }
-  
+
+  const rawContent = typeof message.content === 'string' ? message.content : String(message.content || '');
+  const content = rawContent
+    .replace(/\\n/g, '\n')
+    .replace(/\n(?!\s*([*-]|\d+\.)\s)/g, '  \n');
+
   return (
-    <div className={`flex gap-2 sm:gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+    <div
+      className={`flex gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+    >
       <Avatar sender={message.sender} />
-      
-      <div className={`flex-1 max-w-[85%] sm:max-w-[80%] ${isUser ? 'text-right' : 'text-left'}`}>
+
+      <div className={`flex-1 max-w-[85%] sm:max-w-[75%] ${isUser ? 'text-right' : 'text-left'}`}>
         <div
-          className={`inline-block p-2 sm:p-3 rounded-lg ${
-            isUser
-              ? 'bg-bcit-blue text-white'
-              : 'bg-white border border-gray-200 text-gray-800 '
-          }`}
+          className={`inline-block p-4 sm:p-5 rounded-2xl shadow-sm text-left ${isUser
+            ? 'bg-bcit-blue text-white rounded-tr-none'
+            : 'bg-white border border-gray-100 text-gray-800 rounded-tl-none'
+            }`}
         >
           <div className={`text-sm sm:text-base ${isUser ? 'whitespace-pre-wrap' : 'markdown-content'}`}>
             {isUser ? (
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
             ) : (
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  // Customize heading styles
-                  h1: ({ node, ...props }) => <h1 className="text-xl sm:text-2xl font-bold mb-2 mt-4" {...props} />,
-                  h2: ({ node, ...props }) => <h2 className="text-lg sm:text-xl font-bold mb-2 mt-3" {...props} />,
-                  h3: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-semibold mb-2 mt-2" {...props} />,
-                  // Customize paragraph styles
-                  p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                  // Customize list styles
-                  ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-2 space-y-1" {...props} />,
-                  ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-2 space-y-1" {...props} />,
-                  li: ({ node, ...props }) => <li className="ml-2" {...props} />,
-                  // Customize link styles
-                  a: ({ node, ...props }) => <a className="text-blue-600 hover:text-blue-800 underline" {...props} />,
-                  // Customize code styles
-                  code: ({ node, inline, ...props }: any) => 
-                    inline ? (
-                      <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm" {...props} />
-                    ) : (
-                      <code className="block bg-gray-100 text-gray-800 p-2 rounded my-2 overflow-x-auto text-sm" {...props} />
-                    ),
-                  // Customize pre styles (code blocks)
-                  pre: ({ node, ...props }) => <pre className="bg-gray-100 p-3 rounded my-2 overflow-x-auto" {...props} />,
-                  // Customize blockquote styles
-                  blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2" {...props} />,
-                  // Customize table styles
-                  table: ({ node, ...props }) => <table className="border-collapse border border-gray-300 my-2" {...props} />,
-                  th: ({ node, ...props }) => <th className="border border-gray-300 px-2 py-1 bg-gray-100 font-semibold" {...props} />,
-                  td: ({ node, ...props }) => <td className="border border-gray-300 px-2 py-1" {...props} />,
-                  // Customize strong/bold styles
-                  strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
-                  // Customize emphasis/italic styles
-                  em: ({ node, ...props }) => <em className="italic" {...props} />,
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
+              <div className="prose prose-sm max-w-none text-gray-800 prose-headings:font-bold prose-a:text-bcit-blue prose-strong:text-bcit-blue">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
+                  components={{
+                    h1: ({ node, ...props }) => <h1 className="text-xl sm:text-2xl font-bold mb-2 mt-4" {...props} />,
+                    h2: ({ node, ...props }) => <h2 className="text-lg sm:text-xl font-bold mb-2 mt-3" {...props} />,
+                    h3: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-semibold mb-2 mt-2" {...props} />,
+                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                    ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-4 mb-2 space-y-1" {...props} />,
+                    ol: ({ node, ...props }) => <ol className="list-decimal list-outside ml-4 mb-2 space-y-1" {...props} />,
+                    li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+                    a: ({ node, ...props }) => <a className="text-blue-600 hover:text-blue-800 underline" {...props} />,
+                    code: ({ node, inline, ...props }: any) =>
+                      inline ? (
+                        <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm" {...props} />
+                      ) : (
+                        <code className="block bg-gray-100 text-gray-800 p-2 rounded my-2 overflow-x-auto text-sm" {...props} />
+                      ),
+                    pre: ({ node, ...props }) => <pre className="bg-gray-100 p-3 rounded my-2 overflow-x-auto" {...props} />,
+                    blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2" {...props} />,
+                    table: ({ node, ...props }) => <table className="border-collapse border border-gray-300 my-2" {...props} />,
+                    th: ({ node, ...props }) => <th className="border border-gray-300 px-2 py-1 bg-gray-100 font-semibold" {...props} />,
+                    td: ({ node, ...props }) => <td className="border border-gray-300 px-2 py-1" {...props} />,
+                  }}
+                >
+                  {content}
+                </ReactMarkdown>
+              </div>
             )}
           </div>
         </div>
-        <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
+        <p className={`text-[10px] sm:text-xs mt-2 font-medium ${isUser ? 'text-gray-400 mr-1' : 'text-gray-400 ml-1'}`}>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
-    </div>
+    </div >
   );
 };
 
 // Empty State Component
-const EmptyState = ({ onSuggestedPrompt }: { onSuggestedPrompt: (prompt: string) => void }) => (
-  <div className="text-center space-y-6">
-    <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center justify-center mb-4">
-        <div className="bg-bcit-blue p-3 sm:p-4 rounded-full">
-          <Bot className="w-6 h-6 sm:w-8 sm:h-8 text-bcit-gold" />
-        </div>
+const EmptyState = ({ onStandardClick }: { onStandardClick?: (standard: Standard) => void }) => (
+  <div className="max-w-4xl mx-auto mt-8 sm:mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="text-center mb-10">
+      <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-6">
+        <Bot className="w-8 h-8 text-bcit-blue" />
       </div>
-      <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-2">
-        BCIT Feedback Helper
-      </h3>
-      <p className="text-sm sm:text-base text-gray-600 mb-4">
-        I'm here to help you provide effective feedback to nursing learners based on BCCNM standards of practice.
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+        How can I help you today?
+      </h1>
+      <p className="text-gray-500 max-w-lg mx-auto text-lg">
+        Select a standard below to start generating feedback, or type your own question.
       </p>
     </div>
-    
-    <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200">
-      <div className="space-y-2">
-        {suggestedPrompts.map((prompt, index) => (
-          <button
-            key={index}
-            onClick={() => onSuggestedPrompt(prompt)}
-            className="w-full text-left p-2 sm:p-3 bg-gray-50 hover:bg-gray-100 hover:border-bcit-blue rounded-lg transition-all text-xs sm:text-sm md:text-base text-gray-700 border border-transparent focus:outline-none focus:ring-2 focus:ring-bcit-blue focus:ring-offset-2"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
+      {standards.map((standard) => (
+        <StandardCard
+          key={standard.id}
+          standard={standard}
+          onClick={() => onStandardClick?.(standard)}
+        />
+      ))}
     </div>
   </div>
 );
 
-export function ChatArea({ messages, onSuggestedPrompt }: ChatAreaProps) {
+export function ChatArea({ messages, onStandardClick }: ChatAreaProps) {
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="flex-1 overflow-y-auto space-y-4 mb-4 px-2 sm:px-4 md:px-6">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth">
       {messages.length === 0 ? (
-        <EmptyState onSuggestedPrompt={onSuggestedPrompt} />
+        <EmptyState onStandardClick={onStandardClick} />
       ) : (
-        <div className="space-y-4">
+        <div className="max-w-3xl mx-auto space-y-6 pb-4">
           {messages.map((message) => (
             <MessageBubble key={message.id} message={message} />
           ))}
+          {/* Spacer for input area */}
+          <div className="h-24" />
+          <div ref={messagesEndRef} />
         </div>
       )}
     </div>

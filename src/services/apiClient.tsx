@@ -1,9 +1,6 @@
 import { getSessionId } from "../utils/session";
 import { Standard } from "../types";
 
-import { db } from "../lib/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-
 import { supabase } from "../lib/supabase";
 
 export async function sendMessageToAI(
@@ -11,12 +8,10 @@ export async function sendMessageToAI(
   userMessage?: string,
   standardData?: Standard
 ): Promise<string> {
-  // 🔗 replace this with your friend’s webhook URL
   const webhookUrl =
-    "https://tedok79603.app.n8n.cloud/webhook/cb73ede1-489f-4a13-b2cd-8bb0e3c3d9ca";
+    "https://tedok79603.app.n8n.cloud/webhook/0147a1ea-8f95-411a-bc1c-1f080fd5ffc3";
   const sessionId = getSessionId();
 
-  // Build payload with standard data if available
   const payload: any = {
     sessionId,
     chatInput: (userMessage ?? "") + promptType,

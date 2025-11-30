@@ -4,6 +4,7 @@ import { useSessionSummary } from "../../hooks/useSessionSummary";
 import { exportSessionSummaryToPdf } from "../../utils/exportToPdf";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import type { SessionSummary } from "../../types/summary";
 
 interface DocumentPreviewModalProps {
@@ -80,8 +81,14 @@ export function DocumentPreviewModal({
       <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
-        <div className="bg-white rounded-lg w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white rounded-lg w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-bcit-blue">
@@ -140,13 +147,23 @@ export function DocumentPreviewModal({
                     { key: "s3_summary" },
                     { key: "s4_summary" },
                   ].map(({ key }) => {
-                    const value = (summary as any)[key];
-                    if (!value) return null;
+                    const rawValue = (summary as any)[key];
+                    if (!rawValue) return null;
+
+                    // Process content similar to ChatArea:
+                    // 1. Unescape newlines
+                    // 2. Add hard breaks for non-list lines
+                    const value = typeof rawValue === 'string'
+                      ? rawValue
+                        .replace(/\\n/g, '\n')
+                        .replace(/\n(?!\s*([*-]|\d+\.)\s)/g, '  \n')
+                      : String(rawValue || '');
 
                     return (
                       <div key={key} className="border-bcit-blue pl-4 py-2">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeRaw]}
                           components={markdownComponents}>
                           {value}
                         </ReactMarkdown>

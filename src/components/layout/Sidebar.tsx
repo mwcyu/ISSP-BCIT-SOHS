@@ -48,24 +48,26 @@ const SidebarItem = ({
   isActive = false,
   variant = "default",
 }: SidebarItemProps) => {
-  const baseClasses = "group relative flex items-center my-1 mx-2 rounded-xl transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bcit-gold/50";
-
   // On mobile, we always want full width items if the sidebar is open
   const layoutClasses = isCollapsed
     ? "justify-center h-10 w-10 p-0 mx-auto hidden lg:flex" // Hide collapsed items on mobile, only show on desktop
     : "w-[calc(100%-16px)] px-3 py-2.5 gap-3";
 
   const variantClasses = variant === "danger"
-    ? "text-red-300 hover:bg-red-500/10 hover:text-red-100"
+    ? "text-red-300 hover:bg-red-500/20 hover:text-red-100 border border-transparent hover:border-red-500/30"
     : isActive
       ? "bg-white/10 text-white shadow-sm ring-1 ring-white/20 font-medium"
-      : "text-blue-100/70 hover:bg-white/5 hover:text-white";
+      : "text-blue-100/70 hover:bg-white/10 hover:text-white border border-transparent hover:border-white/10";
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={cn(baseClasses, layoutClasses, variantClasses)}
+      className={cn(
+        "group relative flex items-center my-1 mx-2 rounded-xl transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bcit-gold/50",
+        layoutClasses,
+        variantClasses
+      )}
       title={isCollapsed ? label : ""}
     >
       <Icon
@@ -123,7 +125,7 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed lg:relative flex flex-col h-screen bg-bcit-blue shadow-2xl transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-50 border-r border-white/5",
+          "fixed lg:relative flex flex-col h-screen bg-bcit-blue shadow-2xl transition-all duration-300 ease-in-out z-50 border-r border-white/5",
           // Desktop width
           isCollapsed ? "lg:w-[72px]" : "lg:w-72",
           // Mobile width & positioning
@@ -153,7 +155,7 @@ export function Sidebar({
           "flex items-center h-[72px] border-b border-white/5 transition-all duration-300",
           isCollapsed ? "lg:justify-center lg:px-0" : "px-5 gap-3"
         )}>
-          <div className="relative flex-shrink-0 w-9 h-9 bg-bcit-gold rounded-lg p-1 shadow-sm overflow-hidden">
+          <div className="relative shrink-0 w-9 h-9 bg-bcit-gold rounded-lg p-1 shadow-sm overflow-hidden">
             <img src={bcitLogo} alt="BCIT" className="w-full h-full object-contain" />
           </div>
           {(!isCollapsed || isMobileOpen) && (

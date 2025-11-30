@@ -1,4 +1,4 @@
- import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 // ⚙️ Your Supabase project credentials
 const supabaseUrl = "https://llmrjjoemydhidsedcgj.supabase.co";

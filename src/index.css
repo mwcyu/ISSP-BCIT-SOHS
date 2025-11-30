@@ -11,20 +11,27 @@
   /* Extended Palette for Modern UI */
   --color-primary: var(--color-bcit-blue);
   --color-primary-foreground: #ffffff;
-  
+
   --color-secondary: var(--color-bcit-gold);
   --color-secondary-foreground: var(--color-bcit-dark);
 
-  --color-background: #f8fafc; /* Slate 50 */
+  --color-background: #f8fafc;
+  /* Slate 50 */
   --color-surface: #ffffff;
-  --color-surface-hover: #f1f5f9; /* Slate 100 */
-  
-  --color-text-main: #0f172a; /* Slate 900 */
-  --color-text-muted: #64748b; /* Slate 500 */
-  --color-text-light: #94a3b8; /* Slate 400 */
+  --color-surface-hover: #f1f5f9;
+  /* Slate 100 */
 
-  --color-border: #e2e8f0; /* Slate 200 */
-  --color-border-hover: #cbd5e1; /* Slate 300 */
+  --color-text-main: #0f172a;
+  /* Slate 900 */
+  --color-text-muted: #64748b;
+  /* Slate 500 */
+  --color-text-light: #94a3b8;
+  /* Slate 400 */
+
+  --color-border: #e2e8f0;
+  /* Slate 200 */
+  --color-border-hover: #cbd5e1;
+  /* Slate 300 */
 
   /* Typography */
   --font-sans: "Inter", "Roboto", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -36,7 +43,12 @@
     @apply bg-background text-text-main font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight;
   }
 }
@@ -46,24 +58,48 @@
   .glass-panel {
     @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
   }
-  
+
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-300;
+
+    &:hover {
+      @apply shadow-lg -translate-y-1;
+    }
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-border px-4 py-3 text-sm transition-all duration-200 
-           focus:border-bcit-blue focus:outline-none focus:ring-4 focus:ring-bcit-blue/10
-           disabled:cursor-not-allowed disabled:opacity-50;
+    @apply w-full rounded-xl border border-border px-4 py-3 text-sm transition-all duration-200;
+
+    &:focus {
+      @apply border-bcit-blue outline-none ring-4 ring-bcit-blue/10;
+    }
+
+    &:disabled {
+      @apply cursor-not-allowed opacity-50;
+    }
   }
 
   .btn-primary {
-    @apply flex items-center justify-center rounded-xl bg-bcit-blue px-4 py-3 text-sm font-semibold text-white 
-           shadow-md transition-all duration-200 hover:bg-bcit-dark hover:shadow-lg active:scale-95;
+    @apply flex items-center justify-center rounded-xl bg-bcit-blue px-4 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200;
+
+    &:hover {
+      @apply bg-bcit-dark shadow-lg;
+    }
+
+    &:active {
+      @apply scale-95;
+    }
   }
 
   .btn-secondary {
-    @apply flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-bcit-blue 
-           border border-border shadow-sm transition-all duration-200 hover:bg-slate-50 hover:border-bcit-blue/30 active:scale-95;
+    @apply flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-bcit-blue border border-border shadow-sm transition-all duration-200;
+
+    &:hover {
+      @apply bg-slate-50 border-bcit-blue/30;
+    }
+
+    &:active {
+      @apply scale-95;
+    }
   }
 }

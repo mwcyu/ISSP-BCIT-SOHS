@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import bcitLogo from "../../assets/bcit-logo.png";
 import { supabaseAccess } from "../../lib/supabaseAccessClient";
-import { Shield, Lock, ChevronRight, GraduationCap, FileText, Users, ArrowRight } from "lucide-react";
+import { Shield, Lock, GraduationCap, FileText, Users, ArrowRight } from "lucide-react";
 
 type View = "login" | "admin-login";
 
@@ -65,12 +65,25 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-background font-sans text-text-main">
+      {/* 
+        min-h-screen: Ensures the page takes at least the full height of the viewport.
+        flex flex-col lg:flex-row: Flexbox layout - vertical stack on mobile, horizontal row on desktop (lg breakpoint).
+        bg-background: Uses the theme's background color.
+        font-sans text-text-main: Sets the default font family and text color.
+      */}
       {/* Left Panel - Brand & Info */}
-      {/* Left Panel - Brand & Info */}
+      {/* 
+        lg:w-1/2: Takes up 50% width on desktop.
+        bg-bcit-blue: Primary brand background color.
+        relative overflow-hidden: Context for absolute positioned background patterns.
+        flex flex-col justify-between: Vertical flex layout with space between content and footer.
+        p-6 pt-12 pb-24 lg:p-16: Responsive padding - more padding on desktop, specific top/bottom padding for mobile layout.
+        shrink-0: Prevents the panel from shrinking when content overflows.
+      */}
       <div className="lg:w-1/2 bg-bcit-blue relative overflow-hidden flex flex-col justify-between p-6 pt-12 pb-24 lg:p-16 text-white shrink-0">
         {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-bcit-dark/50 to-transparent" />
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-linear-to-t from-bcit-dark/50 to-transparent" />
 
         <div className="relative z-10 flex flex-col items-center lg:items-start text-center lg:text-left">
           <div className="flex items-center gap-4 mb-6 lg:mb-12">
@@ -104,8 +117,24 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
       </div>
 
       {/* Right Panel - Login Form */}
-      {/* Right Panel - Login Form */}
+      {/* 
+        lg:w-1/2: Takes up 50% width on desktop.
+        flex items-center justify-center: Centers the login card vertically and horizontally.
+        p-4 lg:p-6: Responsive padding.
+        bg-gray-50/50: Subtle background color for the form area.
+        -mt-12 lg:mt-0: Negative margin on mobile to pull the card up over the blue header (overlapping effect).
+        z-20: Ensures the card sits on top of the blue header.
+      */}
       <div className="lg:w-1/2 flex items-center justify-center p-4 lg:p-6 bg-gray-50/50 -mt-12 lg:mt-0 z-20">
+        {/* 
+          w-full max-w-md: Full width but capped at medium size (standard login card width).
+          bg-white: White card background.
+          rounded-3xl: Large rounded corners for modern look.
+          shadow-xl: Deep shadow to lift the card off the background.
+          border border-gray-100: Subtle border definition.
+          p-6 lg:p-10: Responsive internal padding.
+          transition-all duration-500: Smooth animation for any layout changes.
+        */}
         <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-10 transition-all duration-500">
 
           {/* Role Switcher */}
@@ -191,7 +220,7 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
