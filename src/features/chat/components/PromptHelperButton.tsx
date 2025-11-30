@@ -102,7 +102,7 @@ export function PromptHelperButton({ currentStandard }: PromptHelperButtonProps)
     const popoverMaxHeight = isSmall ? 'max-h-[35vh]' : isMobile ? 'max-h-[40vh]' : 'max-h-[70vh]';
 
     return (
-        <div className={`fixed z-50 pointer-events-auto ${isMobile ? 'bottom-[4.3rem] right-2' : 'bottom-[5.7rem] right-[0.7rem]'}`}>
+        <div className={`fixed z-50 pointer-events-auto ${isMobile ? 'bottom-28 right-2' : 'bottom-32 right-4'}`}>
             {/* Popover */}
             {showPopover && (
                 <div

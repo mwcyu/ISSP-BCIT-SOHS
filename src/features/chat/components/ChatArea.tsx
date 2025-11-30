@@ -163,7 +163,7 @@ export function ChatArea({ messages, onStandardClick }: ChatAreaProps) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 pb-32 scroll-smooth">
       {messages.length === 0 ? (
         <EmptyState onStandardClick={onStandardClick} />
       ) : (
