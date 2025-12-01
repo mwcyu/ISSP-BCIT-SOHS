@@ -101,13 +101,13 @@ export default function AccessPage({ onLoginSuccess }: AccessPageProps) {
 
           <p className="text-sm lg:text-xl text-blue-100 max-w-xl leading-relaxed mb-0 lg:mb-12 hidden lg:block">
             Empowering preceptors with AI-assisted tools to deliver structured,
-            standards-based feedback for nursing students.
+            standards-based feedback for nursing learners.
           </p>
 
           <div className="space-y-6 max-w-md hidden lg:block">
             <FeatureItem icon={GraduationCap} text="Aligned with BCCNM Standards" />
-            <FeatureItem icon={FileText} text="Generate Professional Summaries" />
-            <FeatureItem icon={Users} text="Evidence-based Coaching Tips" />
+            <FeatureItem icon={FileText} text="Organizes Your Thoughts in Minutes" />
+            <FeatureItem icon={Users} text="Tailored Learner Improvement Strategies" />
           </div>
         </div>
 
