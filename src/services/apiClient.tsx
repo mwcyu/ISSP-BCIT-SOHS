@@ -9,7 +9,7 @@ export async function sendMessageToAI(
   standardData?: Standard
 ): Promise<string> {
   const webhookUrl =
-    "https://tedok79603.app.n8n.cloud/webhook/0147a1ea-8f95-411a-bc1c-1f080fd5ffc3";
+    "https://clinicalfeedbackhelpern8n.onrender.com/webhook/0147a1ea-8f95-411a-bc1c-1f080fd5ffc3";
   const sessionId = getSessionId();
 
   const payload: any = {
